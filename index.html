@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>القيادة التكتيكية</title>
+<meta name="description" content="أداة لحظية لرصد الاستجابات الدفاعية وتطبيق بروتوكول التدخل وتسجيل المواقف.">
+<meta name="theme-color" content="#0f172a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="القيادة">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --card-2: #162033;
+    --line: #334155;
+    --gold: #d4af37;
+    --gold-soft: rgba(212, 175, 55, .15);
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --red: #f87171;
+    --blue: #60a5fa;
+    --orange: #fb923c;
+    --green: #4ade80;
+    --radius: 16px;
+    --nav-h: 68px;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Cairo', 'Segoe UI', Tahoma, system-ui, sans-serif;
+    line-height: 1.7;
+    min-height: 100dvh;
+    padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom));
+    overscroll-behavior-y: contain;
+  }
+  button, input, textarea, select { font: inherit; color: inherit; }
+  button { cursor: pointer; border: 0; background: none; }
+  svg.i { width: 1.2em; height: 1.2em; flex: none; vertical-align: -0.2em; }
+
+  /* ---------- header ---------- */
+  header.top {
+    position: sticky; top: 0; z-index: 20;
+    display: flex; align-items: center; gap: 12px;
+    padding: calc(10px + env(safe-area-inset-top)) 16px 10px;
+    background: rgba(15, 23, 42, .92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(212, 175, 55, .25);
+  }
+  header.top img { width: 36px; height: 36px; border-radius: 50%; }
+  header.top h1 { margin: 0; font-size: 1.05rem; font-weight: 800; }
+  header.top p { margin: 0; font-size: .72rem; color: var(--gold); }
+
+  main { max-width: 640px; margin: 0 auto; padding: 16px; }
+  .screen { display: none; animation: fade .25s ease; }
+  .screen.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  h2 { font-size: 1.3rem; margin: 4px 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 16px; font-size: .92rem; }
+
+  .card {
+    background: linear-gradient(145deg, var(--card) 0%, var(--card-2) 100%);
+    border: 1px solid rgba(212, 175, 55, .18);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  /* ---------- buttons ---------- */
+  .btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; min-height: 52px; padding: 12px 16px;
+    border-radius: 14px; font-weight: 700; font-size: 1rem;
+    transition: transform .1s ease, background .2s ease;
+  }
+  .btn:active { transform: scale(.98); }
+  .btn-gold { background: var(--gold); color: var(--bg); }
+  .btn-ghost { background: transparent; border: 1px solid var(--line); color: var(--text); }
+  .btn-danger { background: rgba(248, 113, 113, .12); color: var(--red); border: 1px solid rgba(248, 113, 113, .3); }
+  .btn-row { display: flex; gap: 10px; margin-top: 16px; }
+  .btn-row .btn { flex: 1; }
+
+  /* ---------- home ---------- */
+  .sos {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    width: 100%; aspect-ratio: 1.5; border-radius: 24px;
+    background: radial-gradient(circle at 50% 35%, rgba(212, 175, 55, .35), rgba(212, 175, 55, .06) 70%);
+    border: 2px solid var(--gold);
+    color: var(--text); text-align: center; padding: 16px;
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, .5);
+    animation: pulse 2.6s infinite;
+  }
+  .sos:active { transform: scale(.985); }
+  .sos svg { width: 56px; height: 56px; color: var(--gold); }
+  .sos strong { font-size: 1.45rem; font-weight: 800; }
+  .sos span { color: var(--muted); font-size: .9rem; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, .35); } 70% { box-shadow: 0 0 0 16px rgba(212, 175, 55, 0); } 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); } }
+  @media (prefers-reduced-motion: reduce) { .sos { animation: none; } .screen { animation: none; } }
+
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .tile {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+    padding: 14px; border-radius: 14px; text-align: right;
+    background: var(--card); border: 1px solid var(--line);
+  }
+  .tile svg { color: var(--gold); width: 22px; height: 22px; }
+  .tile b { font-size: .98rem; }
+  .tile small { color: var(--muted); font-size: .78rem; line-height: 1.4; }
+
+  .mantra {
+    margin-top: 14px; padding: 14px 16px; border-radius: 14px;
+    border-right: 4px solid var(--gold); background: var(--gold-soft);
+    font-weight: 600;
+  }
+
+  /* ---------- moment flow ---------- */
+  .progress { display: flex; gap: 6px; margin-bottom: 14px; }
+  .progress i { flex: 1; height: 5px; border-radius: 3px; background: var(--line); }
+  .progress i.on { background: var(--gold); }
+  .step { display: none; }
+  .step.active { display: block; animation: fade .25s ease; }
+  .step-label { font-size: .8rem; color: var(--gold); font-weight: 700; letter-spacing: .02em; }
+  .step h3 { font-size: 1.35rem; margin: 2px 0 12px; }
+  .big-line { font-size: 1.15rem; font-weight: 600; margin: 0 0 12px; }
+
+  .group-title { display: flex; align-items: center; gap: 6px; font-weight: 700; margin: 12px 0 8px; font-size: .95rem; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    padding: 8px 14px; border-radius: 999px; font-size: .9rem;
+    background: var(--card); border: 1px solid var(--line); color: var(--text);
+  }
+  .chip[aria-pressed="true"] { background: var(--gold-soft); border-color: var(--gold); color: var(--gold); font-weight: 700; }
+
+  .range-wrap { display: flex; align-items: center; gap: 12px; }
+  input[type="range"] { flex: 1; accent-color: var(--gold); height: 32px; }
+  .range-val { min-width: 48px; text-align: center; font-weight: 800; font-size: 1.2rem; padding: 4px 8px; border-radius: 10px; background: var(--card); border: 1px solid var(--line); }
+  .range-scale { display: flex; justify-content: space-between; font-size: .72rem; color: var(--muted); margin-top: -4px; }
+
+  .breath { display: flex; flex-direction: column; align-items: center; padding: 12px 0 4px; }
+  .breath-circle {
+    width: 190px; height: 190px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+    border: 2px solid var(--gold);
+    background: radial-gradient(circle, rgba(212, 175, 55, .3), rgba(212, 175, 55, .05));
+    transform: scale(.62);
+    transition: transform 4s ease-in-out;
+  }
+  .breath-circle b { font-size: 1.3rem; }
+  .breath-circle small { color: var(--muted); }
+  .breath-count { color: var(--muted); margin-top: 8px; font-size: .9rem; }
+
+  .point { display: flex; gap: 10px; padding: 12px; border-radius: 12px; background: var(--bg); border: 1px solid var(--line); margin-bottom: 8px; }
+  .point .n { flex: none; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--card); color: var(--gold); font-weight: 800; font-size: .9rem; }
+  .accent-red { border-right: 4px solid var(--red); }
+  .accent-blue { border-right: 4px solid var(--blue); }
+  .accent-orange { border-right: 4px solid var(--orange); }
+  .accent-gold { border-right: 4px solid var(--gold); }
+
+  .question {
+    display: block; width: 100%; text-align: right; padding: 14px 16px; margin-bottom: 8px;
+    border-radius: 12px; background: var(--card); border: 1px solid var(--line); font-size: 1.02rem; font-weight: 600;
+  }
+  .question[aria-pressed="true"] { border-color: var(--gold); background: var(--gold-soft); }
+
+  .done-mark { width: 72px; height: 72px; margin: 8px auto 12px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(74, 222, 128, .12); color: var(--green); }
+  .done-mark svg { width: 36px; height: 36px; }
+  .center { text-align: center; }
+
+  /* ---------- forms ---------- */
+  label.f { display: block; font-weight: 700; font-size: .92rem; margin: 14px 0 6px; }
+  label.f small { color: var(--muted); font-weight: 400; }
+  textarea, select {
+    width: 100%; padding: 12px; border-radius: 12px;
+    background: var(--bg); border: 1px solid var(--line); color: var(--text);
+    font-size: 1rem; resize: vertical;
+  }
+  textarea:focus, select:focus { outline: none; border-color: var(--gold); }
+  textarea::placeholder { color: #64748b; }
+  .toggle { display: flex; align-items: center; gap: 10px; margin-top: 14px; font-weight: 600; }
+  .toggle input { width: 22px; height: 22px; accent-color: var(--gold); }
+
+  /* ---------- archive ---------- */
+  .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .toolbar .btn { width: auto; flex: 1 1 auto; min-height: 42px; font-size: .88rem; padding: 8px 12px; }
+  .log { position: relative; }
+  .log-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .log-head > span:last-child { display: flex; align-items: center; gap: 4px; }
+  .log-date { color: var(--muted); font-size: .8rem; }
+  .badge { display: inline-block; font-size: .75rem; padding: 2px 10px; border-radius: 999px; background: var(--gold-soft); color: var(--gold); font-weight: 700; }
+  .log dl { margin: 0; }
+  .log dt { font-size: .75rem; color: var(--muted); margin-top: 8px; }
+  .log dd { margin: 0; }
+  .log dd.thought { color: #fecaca; font-style: italic; }
+  .log dd.response { color: #bbf7d0; }
+  .intensity { display: flex; align-items: center; gap: 8px; font-weight: 800; margin-top: 8px; }
+  .lvl-low { color: var(--green); } .lvl-mid { color: #facc15; } .lvl-high { color: var(--red); }
+  .del { color: var(--muted); padding: 6px; border-radius: 8px; }
+  .del:active { color: var(--red); }
+  .empty { text-align: center; color: var(--muted); padding: 28px 12px; }
+  .empty svg { width: 40px; height: 40px; display: block; margin: 0 auto 8px; color: #475569; }
+
+  /* ---------- progress ---------- */
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+  .stat b { display: block; font-size: 1.6rem; font-weight: 800; line-height: 1.2; }
+  .stat span { color: var(--muted); font-size: .8rem; }
+  .freq { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .freq:last-child { border-bottom: 0; }
+
+  /* ---------- reference card ---------- */
+  details.ref { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 10px; overflow: hidden; }
+  details.ref summary { list-style: none; padding: 14px 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  details.ref summary::-webkit-details-marker { display: none; }
+  details.ref summary::after { content: '▾'; margin-inline-start: auto; color: var(--muted); transition: transform .2s; }
+  details.ref[open] summary::after { transform: rotate(180deg); }
+  details.ref .body { padding: 0 16px 14px; }
+  details.ref .q { color: var(--gold); font-weight: 600; font-size: .9rem; margin: 0 0 8px; }
+  details.ref ul { margin: 0; padding: 0 18px 0 0; }
+  details.ref li { margin-bottom: 8px; color: #cbd5e1; }
+
+  .note { font-size: .78rem; color: var(--muted); text-align: center; margin: 20px 0 8px; line-height: 1.6; }
+
+  /* ---------- bottom nav ---------- */
+  nav.bottom {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 30;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    height: calc(var(--nav-h) + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background: rgba(30, 41, 59, .97);
+    border-top: 1px solid rgba(212, 175, 55, .25);
+  }
+  nav.bottom a {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    color: var(--muted); text-decoration: none; font-size: .74rem; font-weight: 600;
+  }
+  nav.bottom a svg { width: 22px; height: 22px; }
+  nav.bottom a.on { color: var(--gold); }
+
+  .toast {
+    position: fixed; left: 50%; bottom: calc(var(--nav-h) + 16px + env(safe-area-inset-bottom));
+    transform: translateX(-50%) translateY(20px); opacity: 0; pointer-events: none;
+    background: var(--green); color: #052e16; font-weight: 700;
+    padding: 10px 18px; border-radius: 999px; transition: all .25s ease; z-index: 40;
+    max-width: calc(100% - 32px); text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .install { display: none; margin-top: 14px; }
+  .install.show { display: block; }
+</style>
+</head>
+<body>
+
+<!-- SVG icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></symbol>
+    <symbol id="i-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-5 4 10 2-5h6"/></symbol>
+    <symbol id="i-brain" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 6 1V5a2 2 0 0 0-3-1zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-6 1"/></symbol>
+    <symbol id="i-walk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="M9 21l2-6 3 3v3M7 12l3-4 4 1 2 3h3M11 15l1-5"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M4 20h16"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V9M7 14l5-5 5 5M4 4h16"/></symbol>
+  </defs>
+</svg>
+
+<header class="top">
+  <img src="icon.svg" alt="">
+  <div>
+    <h1>القيادة التكتيكية</h1>
+    <p>نظام الإدارة التنفيذية للذات</p>
+  </div>
+</header>
+
+<main>
+
+  <!-- ===================== HOME ===================== -->
+  <section class="screen" id="screen-home">
+    <button class="sos" onclick="go('moment')">
+      <svg class="i"><use href="#i-target"/></svg>
+      <strong>أنا في موقف الآن</strong>
+      <span>أربع خطوات قصيرة لاستعادة السيطرة</span>
+    </button>
+
+    <div class="tiles">
+      <button class="tile" onclick="go('log')">
+        <svg class="i"><use href="#i-edit"/></svg>
+        <b>تسجيل موقف</b>
+        <small>وثّق موقفاً حدث اليوم</small>
+      </button>
+      <button class="tile" onclick="go('card')">
+        <svg class="i"><use href="#i-shield"/></svg>
+        <b>البطاقة المرجعية</b>
+        <small>الرصد، التحليل، التكلفة، البروتوكول</small>
+      </button>
+      <button class="tile" onclick="go('archive')">
+        <svg class="i"><use href="#i-list"/></svg>
+        <b>الأرشيف</b>
+        <small id="home-count">لا توجد سجلات بعد</small>
+      </button>
+      <button class="tile" onclick="go('progress')">
+        <svg class="i"><use href="#i-chart"/></svg>
+        <b>التقدم</b>
+        <small>مؤشرات أسبوعية</small>
+      </button>
+    </div>
+
+    <div class="mantra">
+      قيمتي لا تتأثر بحديث هذا الشخص أو إنجازاته. أنا أختار البقاء حاضراً لأنني أمتلك السيطرة.
+    </div>
+
+    <div class="card install" id="install-card">
+      <b>ثبّت التطبيق على هاتفك</b>
+      <p class="sub" id="install-text" style="margin:4px 0 10px">ليفتح بلمسة واحدة ويعمل دون إنترنت.</p>
+      <button class="btn btn-gold" id="install-btn" hidden>تثبيت</button>
+    </div>
+
+    <p class="note">البيانات محفوظة على هذا الجهاز فقط ولا تُرسل إلى أي جهة.<br>هذه أداة مساندة ضمن خطتك العلاجية ولا تغني عن المتابعة مع معالجك.</p>
+  </section>
+
+  <!-- ===================== MOMENT FLOW ===================== -->
+  <section class="screen" id="screen-moment">
+    <div class="progress" id="moment-progress"><i></i><i></i><i></i><i></i><i></i></div>
+
+    <!-- 1: detect -->
+    <div class="step" data-step="0">
+      <div class="step-label">الخطوة ١ · الرصد المبكر</div>
+      <h3>ماذا ألاحظ الآن؟</h3>
+      <p class="sub" style="margin-bottom:6px">اختر ما ينطبق. مجرد الملاحظة تُضعف الاستجابة الآلية.</p>
+
+      <div class="group-title"><svg class="i" style="color:var(--red)"><use href="#i-pulse"/></svg> جسدياً</div>
+      <div class="chips" data-group="body"></div>
+      <div class="group-title"><svg class="i" style="color:var(--red)"><use href="#i-brain"/></svg> ذهنياً</div>
+      <div class="chips" data-group="mind"></div>
+      <div class="group-title"><svg class="i" style="color:var(--red)"><use href="#i-walk"/></svg> سلوكياً</div>
+      <div class="chips" data-group="behavior"></div>
+
+      <label class="f">مؤشر الاستثارة الداخلية الآن</label>
+      <div class="range-wrap">
+        <input type="range" id="m-before" min="0" max="10" value="5">
+        <span class="range-val" id="m-before-val">5</span>
+      </div>
+      <div class="range-scale"><span>هادئ</span><span>شديد</span></div>
+
+      <div class="btn-row"><button class="btn btn-gold" onclick="nextStep()">التالي</button></div>
+    </div>
+
+    <!-- 2: pause / breathe -->
+    <div class="step" data-step="1">
+      <div class="step-label">الخطوة ٢ · الإيقاف التكتيكي</div>
+      <h3>ثلاثة أنفاس بطيئة</h3>
+      <p class="big-line">أنا أختار البقاء حاضراً لأنني أمتلك السيطرة، ولست مجبراً.</p>
+      <div class="breath">
+        <div class="breath-circle" id="breath-circle"><b id="breath-word">جاهز</b><small id="breath-sec"></small></div>
+        <div class="breath-count" id="breath-count">اضغط «ابدأ» وتنفّس مع الدائرة</div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-ghost" id="breath-btn" onclick="startBreath()">ابدأ</button>
+        <button class="btn btn-gold" onclick="nextStep()">التالي</button>
+      </div>
+    </div>
+
+    <!-- 3: cognitive containment -->
+    <div class="step" data-step="2">
+      <div class="step-label">الخطوة ٣ · الاحتواء المعرفي</div>
+      <h3>ما الذي يحدث فعلاً؟</h3>
+      <div class="point accent-blue"><span>نظامي النفسي يقرأ هذا الموقف كتهديد خفي لمكانتي، فيحاول «التبخيس» ليستعيد توازنه.</span></div>
+      <div class="point accent-gold"><span><b style="color:var(--gold)">الحقيقة:</b> هذا ليس دليلاً على قوتي، بل ميكانيزم دفاعي آلي يهدر طاقتي.</span></div>
+      <div class="point accent-gold"><span><b>لست مضطراً للمنافسة الآن.</b> قيمتي لا تتأثر بحديث هذا الشخص أو إنجازاته. مساحتي محفوظة ومستقلة.</span></div>
+      <div class="point accent-orange"><span><b>الثمن لو استمر النمط:</b> أفقد معلومات مفيدة، أبدو مضطراً لإثبات تفوقي، وأخسر جسور تواصل قد أحتاجها.</span></div>
+      <div class="btn-row"><button class="btn btn-gold" onclick="nextStep()">التالي</button></div>
+    </div>
+
+    <!-- 4: directive action -->
+    <div class="step" data-step="3">
+      <div class="step-label">الخطوة ٤ · إجراء توجيهي</div>
+      <h3>اطرح سؤالاً واحداً</h3>
+      <p class="sub">سؤال حقيقي عمّا يقوله يعيدك «مديراً للحوار» دون الحاجة للتقليل منه. اختر واحداً أو صُغ سؤالك:</p>
+      <div id="questions"></div>
+      <div class="btn-row"><button class="btn btn-gold" onclick="nextStep()">فعلت ذلك</button></div>
+    </div>
+
+    <!-- 5: done -->
+    <div class="step" data-step="4">
+      <div class="done-mark"><svg class="i"><use href="#i-check"/></svg></div>
+      <h3 class="center">أحسنت. استعدت زمام الموقف.</h3>
+      <label class="f">مؤشر الاستثارة الآن</label>
+      <div class="range-wrap">
+        <input type="range" id="m-after" min="0" max="10" value="3">
+        <span class="range-val" id="m-after-val">3</span>
+      </div>
+      <div class="range-scale"><span>هادئ</span><span>شديد</span></div>
+      <div class="btn-row" style="flex-direction:column">
+        <button class="btn btn-gold" onclick="finishMoment(true)">أكمل التسجيل الآن</button>
+        <button class="btn btn-ghost" onclick="finishMoment(false)">احفظ مسودة وأكمل لاحقاً</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== LOG FORM ===================== -->
+  <section class="screen" id="screen-log">
+    <h2>تسجيل موقف</h2>
+    <p class="sub">حلّل الموقف التنافسي وأعد صياغته كفرصة لإثبات الكفاءة الذاتية بهدوء.</p>
+    <form id="log-form" class="card" autocomplete="off">
+      <label class="f">نوع المحفز</label>
+      <div class="chips" id="trigger-chips"></div>
+
+      <label class="f">الموقف / المحفز الخارجي</label>
+      <textarea id="f-situation" required rows="2" placeholder="مثال: زميلي حصل على إشادة من المدير في الاجتماع..."></textarea>
+
+      <label class="f">التقييم التلقائي <small>(الافتراض الدفاعي)</small></label>
+      <textarea id="f-thought" required rows="2" placeholder="مثال: هو لا يستحق، مديري لا يفهم، يجب أن أثبت خطأه..."></textarea>
+
+      <label class="f">مؤشر الاستثارة وقت الموقف</label>
+      <div class="range-wrap">
+        <input type="range" id="f-before" min="0" max="10" value="5">
+        <span class="range-val" id="f-before-val">5</span>
+      </div>
+
+      <label class="f">الاستجابة التكتيكية البديلة <small>(ماذا فعلت فعلاً؟)</small></label>
+      <textarea id="f-response" required rows="2" placeholder="مثال: حافظت على هدوئي، هنأته بكلمة واحدة، وسألته عن الخطوة القادمة."></textarea>
+
+      <label class="f">مؤشر الاستثارة بعد الاستجابة</label>
+      <div class="range-wrap">
+        <input type="range" id="f-after" min="0" max="10" value="3">
+        <span class="range-val" id="f-after-val">3</span>
+      </div>
+
+      <label class="toggle"><input type="checkbox" id="f-protocol"> طبّقت بروتوكول التدخل في اللحظة</label>
+
+      <div class="btn-row">
+        <button type="submit" class="btn btn-gold"><svg class="i"><use href="#i-check"/></svg> حفظ السجل</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- ===================== ARCHIVE ===================== -->
+  <section class="screen" id="screen-archive">
+    <h2>أرشيف المواقف</h2>
+    <p class="sub">يمكنك تصدير السجل ومشاركته مع معالجك قبل الجلسة.</p>
+    <div class="toolbar">
+      <button class="btn btn-ghost" onclick="exportCSV()"><svg class="i"><use href="#i-download"/></svg> تصدير (Excel)</button>
+      <button class="btn btn-ghost" onclick="exportJSON()"><svg class="i"><use href="#i-download"/></svg> نسخة احتياطية</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('import-file').click()"><svg class="i"><use href="#i-upload"/></svg> استعادة</button>
+      <input type="file" id="import-file" accept="application/json,.json" hidden>
+    </div>
+    <div id="logs"></div>
+    <button class="btn btn-danger" id="clear-btn" onclick="clearLogs()" style="margin-top:8px"><svg class="i"><use href="#i-trash"/></svg> مسح الأرشيف بالكامل</button>
+  </section>
+
+  <!-- ===================== PROGRESS ===================== -->
+  <section class="screen" id="screen-progress">
+    <h2>مؤشرات التقدم</h2>
+    <p class="sub">الهدف ليس غياب الاستثارة، بل انخفاضها بعد الاستجابة وتكرار تطبيق البروتوكول.</p>
+    <div id="progress-body"></div>
+  </section>
+
+  <!-- ===================== REFERENCE CARD ===================== -->
+  <section class="screen" id="screen-card">
+    <h2>البطاقة المرجعية</h2>
+    <p class="sub">إدارة الاستجابات الدفاعية وتوجيه الانفعالات بذكاء استراتيجي.</p>
+
+    <details class="ref accent-red" open>
+      <summary>نظام الرصد المبكر</summary>
+      <div class="body">
+        <p class="q">مؤشرات تفعيل نمط المتعالي / التبخيس الآن:</p>
+        <ul>
+          <li><b>جسدياً:</b> تململ، توتر في الفك، أو رغبة ملحة في المقاطعة وتغيير مسار الحديث.</li>
+          <li><b>ذهنياً:</b> أعتقد أن المتحدث ممل، أو أن ما يقوله / يفعله تافه ولا يستحق وقتي أو تقديري.</li>
+          <li><b>سلوكياً:</b> بدأت في الانفصال ذهنياً (الشرود)، أو أجهز رداً يثبت تفوقي بدلاً من الاستماع.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="ref accent-blue">
+      <summary>التحليل الموضوعي</summary>
+      <div class="body">
+        <p class="q">ما الذي يحدث في كواليس عقلي؟</p>
+        <ul>
+          <li>نظامي النفسي يقرأ هذا الموقف (نجاح الآخر، أو عدم كوني في المركز) كتهديد خفي لمكانتي.</li>
+          <li>لدي رغبة لاواعية في «تبخيس» الآخر لأستعيد توازني وأشعر بالسيطرة المؤقتة.</li>
+          <li><b style="color:var(--gold)">الحقيقة:</b> هذا الرد ليس دليلاً على قوتي، بل هو ميكانيزم دفاعي (رد فعل آلي) يهدر طاقتي العقلية.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="ref accent-orange">
+      <summary>التكلفة الاستراتيجية</summary>
+      <div class="body">
+        <p class="q">لماذا يجب أن أوقف هذا النمط الآن؟</p>
+        <ul>
+          <li><b>فقدان المعلومات:</b> الانفصال الذهني يجعلني أفقد تفاصيل قد أستفيد منها لاحقاً.</li>
+          <li><b>الضرر بالصورة العامة:</b> إظهار الملل أو تبخيس الآخرين يجعلني أبدو مضطراً لإثبات تفوقي، وهو عكس صورة الشخصية القيادية الواثقة حقاً.</li>
+          <li><b>الخسارة بعيدة المدى:</b> تدمير جسور التواصل مع حلفاء أو شركاء محتملين بسبب رد فعل دفاعي لحظي.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="ref accent-gold" open>
+      <summary>بروتوكول التدخل</summary>
+      <div class="body">
+        <p class="q">خطوات استعادة السيطرة الذكية:</p>
+        <div class="point"><span class="n">1</span><span><b>الإيقاف التكتيكي:</b> تنفس ببطء. أنا أختار البقاء حاضراً لأنني أمتلك السيطرة، ولست مجبراً.</span></div>
+        <div class="point"><span class="n">2</span><span><b>الاحتواء المعرفي:</b> لست مضطراً للمنافسة الآن. قيمتي لا تتأثر بحديث هذا الشخص أو إنجازاته. مساحتي محفوظة ومستقلة.</span></div>
+        <div class="point"><span class="n" style="background:var(--gold);color:var(--bg)">3</span><span><b>إجراء توجيهي:</b> سأطرح سؤالاً واحداً حول ما يقوله. هذا يعيدني كـ«مدير للحوار» استراتيجياً دون الحاجة للتقليل منه.</span></div>
+      </div>
+    </details>
+
+    <button class="btn btn-gold" onclick="go('moment')" style="margin-top:6px">ابدأ البروتوكول الآن</button>
+  </section>
+
+</main>
+
+<nav class="bottom">
+  <a href="#home" data-nav="home"><svg class="i"><use href="#i-home"/></svg>الرئيسية</a>
+  <a href="#card" data-nav="card"><svg class="i"><use href="#i-shield"/></svg>البطاقة</a>
+  <a href="#archive" data-nav="archive"><svg class="i"><use href="#i-list"/></svg>الأرشيف</a>
+  <a href="#progress" data-nav="progress"><svg class="i"><use href="#i-chart"/></svg>التقدم</a>
+</nav>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============================================================
+   Content
+   ============================================================ */
+const SIGNALS = {
+  body: ['توتر في الفك', 'تململ', 'رغبة ملحة في المقاطعة', 'رغبة في تغيير مسار الحديث'],
+  mind: ['المتحدث ممل', 'ما يقوله تافه', 'لا يستحق وقتي أو تقديري', 'يجب أن أثبت أنني أفضل'],
+  behavior: ['شرود / انفصال ذهني', 'أجهز رداً يثبت تفوقي', 'قاطعت فعلاً', 'أظهرت الملل']
+};
+const TRIGGERS = ['نجاح أو إشادة لشخص آخر', 'لست في مركز الحديث', 'حديث أراه مملاً', 'نقد أو تصحيح لي', 'أخرى'];
+const QUESTIONS = [
+  'كيف وصلت إلى هذه النتيجة؟',
+  'ما أصعب جزء واجهته في ذلك؟',
+  'ما الخطوة القادمة برأيك؟',
+  'ما الذي تعلمته من هذه التجربة؟'
+];
+
+/* ============================================================
+   Storage (guarded — storage can be unavailable)
+   ============================================================ */
+const STORAGE_KEY = 'tactical_logs_v1';
+const DRAFT_KEY = 'tactical_draft_v1';
+
+function load(key, fallback) {
+  try { const v = JSON.parse(localStorage.getItem(key)); return v ?? fallback; } catch { return fallback; }
+}
+function save(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); return true; }
+  catch { toast('تعذّر الحفظ على هذا الجهاز', true); return false; }
+}
+function remove(key) { try { localStorage.removeItem(key); } catch {} }
+
+// Normalise entries, including those saved by the original dashboard (date string + intensity).
+function normalise(l) {
+  return {
+    id: l.id || Date.now() + Math.random(),
+    ts: l.ts || (typeof l.id === 'number' ? l.id : null),
+    date: l.date || '',
+    trigger: l.trigger || '',
+    situation: l.situation || '',
+    thought: l.thought || '',
+    signals: Array.isArray(l.signals) ? l.signals : [],
+    before: l.before ?? (l.intensity != null ? Number(l.intensity) : null),
+    after: l.after ?? null,
+    protocol: !!l.protocol,
+    response: l.response || ''
+  };
+}
+let logs = load(STORAGE_KEY, []).map(normalise);
+
+/* ============================================================
+   Helpers
+   ============================================================ */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmtDate = (l) => l.ts
+  ? new Date(l.ts).toLocaleString('ar-EG', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+  : l.date;
+const lvl = (n) => n == null ? '' : n >= 8 ? 'lvl-high' : n >= 5 ? 'lvl-mid' : 'lvl-low';
+
+let toastTimer;
+function toast(msg, isError) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.style.background = isError ? 'var(--red)' : 'var(--green)';
+  t.style.color = isError ? '#fff' : '#052e16';
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function bindRange(id) {
+  const r = $('#' + id), v = $('#' + id + '-val');
+  r.addEventListener('input', () => { v.textContent = r.value; });
+  return (val) => { if (val != null) r.value = val; v.textContent = r.value; };
+}
+
+function chip(label, group) {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'chip';
+  b.textContent = label;
+  b.setAttribute('aria-pressed', 'false');
+  b.addEventListener('click', () => {
+    if (group === 'single') {
+      $$('.chip', b.parentElement).forEach((c) => c !== b && c.setAttribute('aria-pressed', 'false'));
+    }
+    b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+  });
+  return b;
+}
+
+/* ============================================================
+   Routing
+   ============================================================ */
+const SCREENS = ['home', 'moment', 'log', 'archive', 'progress', 'card'];
+
+function go(name) {
+  if (location.hash !== '#' + name) location.hash = name;
+  else route();
+}
+
+function route() {
+  const name = SCREENS.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'home';
+  $$('.screen').forEach((s) => s.classList.toggle('active', s.id === 'screen-' + name));
+  $$('nav.bottom a').forEach((a) => a.classList.toggle('on', a.dataset.nav === name));
+  if (name === 'moment') resetMoment();
+  if (name === 'log') prepareLogForm();
+  if (name === 'archive') renderLogs();
+  if (name === 'progress') renderProgress();
+  if (name === 'home') renderHome();
+  window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', route);
+
+/* ============================================================
+   Moment flow
+   ============================================================ */
+let step = 0;
+const setBefore = bindRange('m-before');
+const setAfter = bindRange('m-after');
+
+$$('[data-group]').forEach((wrap) => SIGNALS[wrap.dataset.group].forEach((s) => wrap.appendChild(chip(s))));
+QUESTIONS.forEach((q) => {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'question';
+  b.textContent = q;
+  b.setAttribute('aria-pressed', 'false');
+  b.addEventListener('click', () => {
+    $$('.question').forEach((x) => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+  });
+  $('#questions').appendChild(b);
+});
+
+function showStep(n) {
+  step = n;
+  $$('#screen-moment .step').forEach((s) => s.classList.toggle('active', Number(s.dataset.step) === n));
+  $$('#moment-progress i').forEach((b, i) => b.classList.toggle('on', i <= n));
+  window.scrollTo(0, 0);
+}
+function nextStep() {
+  stopBreath();
+  if (step === 3) setAfter(Math.max(0, Number($('#m-before').value) - 2));
+  showStep(Math.min(step + 1, 4));
+}
+function resetMoment() {
+  stopBreath();
+  $$('#screen-moment .chip, .question').forEach((c) => c.setAttribute('aria-pressed', 'false'));
+  setBefore(5);
+  setAfter(3);
+  $('#breath-word').textContent = 'جاهز';
+  $('#breath-sec').textContent = '';
+  $('#breath-count').textContent = 'اضغط «ابدأ» وتنفّس مع الدائرة';
+  $('#breath-btn').textContent = 'ابدأ';
+  showStep(0);
+}
+
+// Breathing pacer: 3 cycles of 4 s inhale / 6 s exhale.
+let breathTimers = [];
+function stopBreath() {
+  breathTimers.forEach(clearTimeout);
+  breathTimers = [];
+  const c = $('#breath-circle');
+  c.style.transition = 'transform .4s ease';
+  c.style.transform = 'scale(.62)';
+}
+function startBreath() {
+  stopBreath();
+  const c = $('#breath-circle'), word = $('#breath-word'), sec = $('#breath-sec'), count = $('#breath-count');
+  const IN = 4, OUT = 6, CYCLES = 3;
+  let t = 0;
+  const at = (ms, fn) => breathTimers.push(setTimeout(fn, ms));
+  for (let i = 0; i < CYCLES; i++) {
+    at(t * 1000, () => {
+      c.style.transition = `transform ${IN}s ease-in-out`;
+      c.style.transform = 'scale(1)';
+      word.textContent = 'شهيق';
+      count.textContent = `النَّفَس ${i + 1} من ${CYCLES}`;
+      if (navigator.vibrate) navigator.vibrate(30);
+    });
+    for (let s = 0; s < IN; s++) at((t + s) * 1000, () => { sec.textContent = IN - s; });
+    t += IN;
+    at(t * 1000, () => {
+      c.style.transition = `transform ${OUT}s ease-in-out`;
+      c.style.transform = 'scale(.62)';
+      word.textContent = 'زفير بطيء';
+    });
+    for (let s = 0; s < OUT; s++) at((t + s) * 1000, () => { sec.textContent = OUT - s; });
+    t += OUT;
+  }
+  at(t * 1000, () => {
+    word.textContent = 'أحسنت';
+    sec.textContent = '';
+    count.textContent = 'انتقل للخطوة التالية';
+    $('#breath-btn').textContent = 'كرّر';
+  });
+  $('#breath-btn').textContent = 'إعادة';
+}
+
+function finishMoment(fillNow) {
+  const signals = $$('#screen-moment .chip[aria-pressed="true"]').map((c) => c.textContent);
+  const q = $('.question[aria-pressed="true"]');
+  const draft = {
+    ts: Date.now(),
+    signals,
+    before: Number($('#m-before').value),
+    after: Number($('#m-after').value),
+    protocol: true,
+    response: q ? `طبّقت البروتوكول وسألت: «${q.textContent}»` : 'طبّقت البروتوكول وطرحت سؤالاً حول ما يقوله.'
+  };
+  save(DRAFT_KEY, draft);
+  if (fillNow) go('log');
+  else { toast('حُفظت المسودة — أكملها من «تسجيل موقف»'); go('home'); }
+}
+
+/* ============================================================
+   Log form
+   ============================================================ */
+const setFBefore = bindRange('f-before');
+const setFAfter = bindRange('f-after');
+TRIGGERS.forEach((t) => $('#trigger-chips').appendChild(chip(t, 'single')));
+
+function prepareLogForm() {
+  const d = load(DRAFT_KEY, null);
+  if (!d) return;
+  setFBefore(d.before);
+  setFAfter(d.after);
+  $('#f-protocol').checked = !!d.protocol;
+  if (!$('#f-response').value) $('#f-response').value = d.response || '';
+  if (!$('#f-thought').value && d.signals && d.signals.length) {
+    const mind = d.signals.filter((s) => SIGNALS.mind.includes(s));
+    if (mind.length) $('#f-thought').value = mind.join('، ');
+  }
+}
+
+$('#log-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const d = load(DRAFT_KEY, null);
+  const trig = $('#trigger-chips .chip[aria-pressed="true"]');
+  const entry = normalise({
+    id: Date.now(),
+    ts: d ? d.ts : Date.now(),
+    trigger: trig ? trig.textContent : '',
+    situation: $('#f-situation').value.trim(),
+    thought: $('#f-thought').value.trim(),
+    signals: d ? d.signals : [],
+    before: Number($('#f-before').value),
+    after: Number($('#f-after').value),
+    protocol: $('#f-protocol').checked,
+    response: $('#f-response').value.trim()
+  });
+  logs.push(entry);
+  if (!save(STORAGE_KEY, logs)) { logs.pop(); return; }
+  remove(DRAFT_KEY);
+  e.target.reset();
+  $$('#trigger-chips .chip').forEach((c) => c.setAttribute('aria-pressed', 'false'));
+  setFBefore(5); setFAfter(3);
+  toast('تم حفظ السجل');
+  go('archive');
+});
+
+/* ============================================================
+   Archive
+   ============================================================ */
+function renderLogs() {
+  const box = $('#logs');
+  $('#clear-btn').hidden = logs.length === 0;
+  if (!logs.length) {
+    box.innerHTML = `<div class="card empty"><svg class="i"><use href="#i-box"/></svg>لا توجد سجلات بعد. ابدأ برصد استجاباتك.</div>`;
+    return;
+  }
+  box.innerHTML = [...logs].reverse().map((l) => `
+    <article class="card log">
+      <div class="log-head">
+        <span class="log-date">${esc(fmtDate(l))}</span>
+        <span>
+          ${l.trigger ? `<span class="badge">${esc(l.trigger)}</span>` : ''}
+          <button class="del" aria-label="حذف السجل" onclick="deleteLog('${esc(String(l.id))}')"><svg class="i"><use href="#i-trash"/></svg></button>
+        </span>
+      </div>
+      <dl>
+        <dt>الموقف</dt><dd>${esc(l.situation)}</dd>
+        <dt>التقييم التلقائي</dt><dd class="thought">${esc(l.thought)}</dd>
+        <dt>الاستجابة التكتيكية</dt><dd class="response">${esc(l.response)}</dd>
+      </dl>
+      <div class="intensity">
+        <span class="${lvl(l.before)}">${l.before ?? '–'}/10</span>
+        ${l.after != null ? `<span style="color:var(--muted)">←</span><span class="${lvl(l.after)}">${l.after}/10</span>` : ''}
+        ${l.protocol ? `<span class="badge" style="margin-inline-start:auto">البروتوكول مُطبَّق</span>` : ''}
+      </div>
+    </article>`).join('');
+}
+
+function deleteLog(id) {
+  if (!confirm('حذف هذا السجل؟')) return;
+  logs = logs.filter((l) => String(l.id) !== id);
+  save(STORAGE_KEY, logs);
+  renderLogs();
+}
+
+function clearLogs() {
+  if (!confirm('هل أنت متأكد من مسح الأرشيف بالكامل؟ لا يمكن التراجع عن هذا الإجراء. يُنصح بتصدير نسخة احتياطية أولاً.')) return;
+  logs = [];
+  remove(STORAGE_KEY);
+  renderLogs();
+}
+
+function download(name, content, type) {
+  const blob = new Blob([content], { type });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+const stamp = () => new Date().toISOString().slice(0, 10);
+
+function exportCSV() {
+  if (!logs.length) return toast('لا توجد سجلات للتصدير', true);
+  const cols = ['التاريخ', 'نوع المحفز', 'الموقف', 'التقييم التلقائي', 'المؤشرات', 'الاستثارة قبل', 'الاستثارة بعد', 'البروتوكول', 'الاستجابة'];
+  const q = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const rows = logs.map((l) => [
+    l.ts ? new Date(l.ts).toLocaleString('ar-EG') : l.date, l.trigger, l.situation, l.thought,
+    l.signals.join('، '), l.before, l.after, l.protocol ? 'نعم' : 'لا', l.response
+  ].map(q).join(','));
+  download(`سجل-المواقف-${stamp()}.csv`, '﻿' + [cols.map(q).join(','), ...rows].join('\r\n'), 'text/csv;charset=utf-8');
+}
+
+function exportJSON() {
+  if (!logs.length) return toast('لا توجد سجلات للتصدير', true);
+  download(`نسخة-احتياطية-${stamp()}.json`, JSON.stringify({ app: 'tactical', version: 1, logs }, null, 2), 'application/json');
+}
+
+$('#import-file').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
+  try {
+    const data = JSON.parse(await file.text());
+    const incoming = (Array.isArray(data) ? data : data.logs || []).map(normalise);
+    const known = new Set(logs.map((l) => String(l.id)));
+    const fresh = incoming.filter((l) => !known.has(String(l.id)));
+    logs = [...logs, ...fresh].sort((a, b) => (a.ts || 0) - (b.ts || 0));
+    save(STORAGE_KEY, logs);
+    renderLogs();
+    toast(`تمت استعادة ${fresh.length} سجل`);
+  } catch {
+    toast('الملف غير صالح', true);
+  }
+});
+
+/* ============================================================
+   Progress
+   ============================================================ */
+function avg(arr) { return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : null; }
+const f1 = (n) => n == null ? '–' : n.toLocaleString('ar-EG', { maximumFractionDigits: 1 });
+
+function renderProgress() {
+  const box = $('#progress-body');
+  if (!logs.length) {
+    box.innerHTML = `<div class="card empty"><svg class="i"><use href="#i-chart"/></svg>ستظهر المؤشرات بعد تسجيل أول موقف.</div>`;
+    return;
+  }
+  const week = Date.now() - 7 * 864e5;
+  const thisWeek = logs.filter((l) => l.ts && l.ts >= week);
+  const befores = logs.map((l) => l.before).filter((n) => n != null);
+  const paired = logs.filter((l) => l.before != null && l.after != null);
+  const drop = avg(paired.map((l) => l.before - l.after));
+  const protoRate = Math.round(100 * logs.filter((l) => l.protocol).length / logs.length);
+
+  const counts = {};
+  logs.forEach((l) => { if (l.trigger) counts[l.trigger] = (counts[l.trigger] || 0) + 1; });
+  const freq = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+
+  const sigCounts = {};
+  logs.forEach((l) => l.signals.forEach((s) => { sigCounts[s] = (sigCounts[s] || 0) + 1; }));
+  const sigs = Object.entries(sigCounts).sort((a, b) => b[1] - a[1]).slice(0, 4);
+
+  box.innerHTML = `
+    <div class="stats">
+      <div class="stat"><b>${logs.length.toLocaleString('ar-EG')}</b><span>إجمالي المواقف المرصودة</span></div>
+      <div class="stat"><b>${thisWeek.length.toLocaleString('ar-EG')}</b><span>خلال آخر ٧ أيام</span></div>
+      <div class="stat"><b>${f1(avg(befores))}</b><span>متوسط الاستثارة وقت الموقف</span></div>
+      <div class="stat"><b style="color:var(--green)">${drop == null ? '–' : '−' + f1(drop)}</b><span>متوسط الانخفاض بعد الاستجابة</span></div>
+      <div class="stat" style="grid-column:1/-1"><b style="color:var(--gold)">${protoRate.toLocaleString('ar-EG')}٪</b><span>نسبة المواقف التي طُبّق فيها البروتوكول</span></div>
+    </div>
+    ${freq.length ? `<div class="card" style="margin-top:12px"><b>أكثر المحفزات تكراراً</b>
+      ${freq.map(([k, v]) => `<div class="freq"><span>${esc(k)}</span><b>${v.toLocaleString('ar-EG')}</b></div>`).join('')}</div>` : ''}
+    ${sigs.length ? `<div class="card"><b>أكثر مؤشرات الرصد المبكر ظهوراً</b>
+      ${sigs.map(([k, v]) => `<div class="freq"><span>${esc(k)}</span><b>${v.toLocaleString('ar-EG')}</b></div>`).join('')}</div>` : ''}
+  `;
+}
+
+/* ============================================================
+   Home
+   ============================================================ */
+function renderHome() {
+  const draft = load(DRAFT_KEY, null);
+  $('#home-count').textContent = draft
+    ? 'لديك مسودة لم تكتمل'
+    : logs.length ? `${logs.length.toLocaleString('ar-EG')} موقف مسجّل` : 'لا توجد سجلات بعد';
+}
+
+/* ============================================================
+   Install (PWA)
+   ============================================================ */
+let deferredPrompt;
+const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+if (!standalone) {
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  if (isIOS) {
+    $('#install-text').textContent = 'في Safari: اضغط زر المشاركة ثم «إضافة إلى الشاشة الرئيسية».';
+    $('#install-card').classList.add('show');
+  }
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    $('#install-card').classList.add('show');
+    $('#install-btn').hidden = false;
+  });
+  $('#install-btn').addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    $('#install-card').classList.remove('show');
+  });
+}
+
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+route();
+</script>
+</body>
+</html>
