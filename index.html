@@ -13,10 +13,20 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<!-- Privacy hardening: the page may only talk to its own origin (no third-party fonts, analytics or network calls). -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
 <style>
+  /* Cairo, self-hosted (SIL OFL 1.1 — fonts/OFL.txt) */
+  @font-face { font-family: 'Cairo'; font-weight: 400; font-display: swap; src: url(fonts/cairo-arabic-400-normal.woff2) format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FEFC; }
+  @font-face { font-family: 'Cairo'; font-weight: 600; font-display: swap; src: url(fonts/cairo-arabic-600-normal.woff2) format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FEFC; }
+  @font-face { font-family: 'Cairo'; font-weight: 700; font-display: swap; src: url(fonts/cairo-arabic-700-normal.woff2) format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FEFC; }
+  @font-face { font-family: 'Cairo'; font-weight: 800; font-display: swap; src: url(fonts/cairo-arabic-800-normal.woff2) format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FEFC; }
+  @font-face { font-family: 'Cairo'; font-weight: 400; font-display: swap; src: url(fonts/cairo-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Cairo'; font-weight: 600; font-display: swap; src: url(fonts/cairo-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Cairo'; font-weight: 700; font-display: swap; src: url(fonts/cairo-latin-700-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Cairo'; font-weight: 800; font-display: swap; src: url(fonts/cairo-latin-800-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
   :root {
     --bg: #0f172a;
     --card: #1e293b;
@@ -34,6 +44,7 @@
     --nav-h: 68px;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  [hidden] { display: none !important; }
   html, body { margin: 0; }
   body {
     background: var(--bg);
@@ -125,6 +136,9 @@
   }
 
   /* ---------- moment flow ---------- */
+  .moment-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; min-height: 28px; }
+  .moment-head small { color: var(--muted); font-size: .8rem; }
+  .link-btn { color: var(--muted); font-size: .85rem; text-decoration: underline; text-underline-offset: 3px; padding: 4px 0; }
   .progress { display: flex; gap: 6px; margin-bottom: 14px; }
   .progress i { flex: 1; height: 5px; border-radius: 3px; background: var(--line); }
   .progress i.on { background: var(--gold); }
@@ -188,6 +202,21 @@
   textarea:focus, select:focus { outline: none; border-color: var(--gold); }
   textarea::placeholder { color: #64748b; }
   .toggle { display: flex; align-items: center; gap: 10px; margin-top: 14px; font-weight: 600; }
+  fieldset.checks { border: 1px solid var(--line); border-radius: 12px; padding: 4px 12px 10px; margin: 14px 0 0; }
+  fieldset.checks legend { font-weight: 700; font-size: .92rem; padding: 0 6px; }
+  fieldset.checks .toggle { margin-top: 8px; font-weight: 400; }
+  input[type="text"] {
+    width: 100%; padding: 12px; border-radius: 12px;
+    background: var(--bg); border: 1px solid var(--line); color: var(--text); font-size: 1rem;
+  }
+  input[type="text"]:focus { outline: none; border-color: var(--gold); }
+  .draft-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 14px; margin-bottom: 12px; border-radius: 12px; background: var(--gold-soft); border: 1px solid rgba(212, 175, 55, .4); font-size: .9rem; }
+  .signal-list { display: flex; flex-wrap: wrap; gap: 6px; }
+  .signal-list span { font-size: .8rem; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+  .stat em { display: block; font-style: normal; color: var(--muted); font-size: .72rem; margin-top: 2px; }
+  .rate { display: flex; justify-content: space-between; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .rate:last-child { border-bottom: 0; }
+  .rate b { font-variant-numeric: tabular-nums; }
   .toggle input { width: 22px; height: 22px; accent-color: var(--gold); }
 
   /* ---------- archive ---------- */
@@ -250,11 +279,15 @@
   .toast {
     position: fixed; left: 50%; bottom: calc(var(--nav-h) + 16px + env(safe-area-inset-bottom));
     transform: translateX(-50%) translateY(20px); opacity: 0; pointer-events: none;
+    display: flex; align-items: center; gap: 14px;
     background: var(--green); color: #052e16; font-weight: 700;
     padding: 10px 18px; border-radius: 999px; transition: all .25s ease; z-index: 40;
-    max-width: calc(100% - 32px); text-align: center;
+    max-width: calc(100% - 32px); text-align: center; white-space: nowrap;
   }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+  .toast.error { background: var(--red); color: #fff; }
+  .toast.neutral { background: #e2e8f0; color: var(--bg); }
+  .toast button { font-weight: 800; color: var(--gold); background: var(--bg); padding: 4px 12px; border-radius: 999px; }
 
   .install { display: none; margin-top: 14px; }
   .install.show { display: block; }
@@ -297,7 +330,7 @@
     <button class="sos" onclick="go('moment')">
       <svg class="i"><use href="#i-target"/></svg>
       <strong>أنا في موقف الآن</strong>
-      <span>أربع خطوات قصيرة لاستعادة السيطرة</span>
+      <span id="sos-sub">٤ خطوات قصيرة ثم تقييم سريع</span>
     </button>
 
     <div class="tiles">
@@ -333,12 +366,21 @@
       <button class="btn btn-gold" id="install-btn" hidden>تثبيت</button>
     </div>
 
-    <p class="note">البيانات محفوظة على هذا الجهاز فقط ولا تُرسل إلى أي جهة.<br>هذه أداة مساندة ضمن خطتك العلاجية ولا تغني عن المتابعة مع معالجك.</p>
+    <p class="note">
+      سجلاتك تُحفظ في متصفح هذا الجهاز فقط، ولا يرسلها التطبيق إلى أي خادم؛ لا يحتوي على تتبّع أو تحليلات،
+      ولا يتصل إلا بموقع الاستضافة الذي يُحمَّل منه. تصل سجلاتك إلى معالجك فقط إذا صدّرتها وأرسلتها بنفسك.<br>
+      حذف بيانات المتصفح أو إزالة التطبيق قد يحذف السجل — احتفظ بنسخة احتياطية من «الأرشيف».<br>
+      هذه أداة مساندة ضمن خطتك العلاجية ولا تغني عن المتابعة مع معالجك.
+    </p>
   </section>
 
   <!-- ===================== MOMENT FLOW ===================== -->
   <section class="screen" id="screen-moment">
-    <div class="progress" id="moment-progress"><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="moment-head">
+      <small id="moment-resumed" hidden>استكمال موقف بدأ الساعة <span id="moment-started"></span></small>
+      <button class="link-btn" id="moment-restart" onclick="restartMoment()" hidden>بدء موقف جديد</button>
+    </div>
+    <div class="progress" id="moment-progress"><i></i><i></i><i></i><i></i></div>
 
     <!-- 1: detect -->
     <div class="step" data-step="0">
@@ -400,6 +442,7 @@
 
     <!-- 5: done -->
     <div class="step" data-step="4">
+      <div class="step-label center">الختام · تقييم سريع</div>
       <div class="done-mark"><svg class="i"><use href="#i-check"/></svg></div>
       <h3 class="center">أحسنت. استعدت زمام الموقف.</h3>
       <label class="f">مؤشر الاستثارة الآن</label>
@@ -419,7 +462,16 @@
   <section class="screen" id="screen-log">
     <h2>تسجيل موقف</h2>
     <p class="sub">حلّل الموقف التنافسي وأعد صياغته كفرصة لإثبات الكفاءة الذاتية بهدوء.</p>
+    <div class="draft-bar" id="draft-bar" hidden>
+      <span>مسودة محفوظة تلقائياً</span>
+      <button type="button" class="link-btn" onclick="discardDraft()">تجاهل المسودة</button>
+    </div>
     <form id="log-form" class="card" autocomplete="off">
+      <div id="f-signals-wrap" hidden>
+        <label class="f" style="margin-top:0">المؤشرات التي رصدتها في اللحظة</label>
+        <div class="signal-list" id="f-signals"></div>
+      </div>
+
       <label class="f">نوع المحفز</label>
       <div class="chips" id="trigger-chips"></div>
 
@@ -435,6 +487,10 @@
         <span class="range-val" id="f-before-val">5</span>
       </div>
 
+      <label class="f" for="f-question">السؤال الذي طرحته <small>(إن وُجد)</small></label>
+      <input type="text" id="f-question" list="question-list" placeholder="مثال: كيف وصلت إلى هذه النتيجة؟">
+      <datalist id="question-list"></datalist>
+
       <label class="f">الاستجابة التكتيكية البديلة <small>(ماذا فعلت فعلاً؟)</small></label>
       <textarea id="f-response" required rows="2" placeholder="مثال: حافظت على هدوئي، هنأته بكلمة واحدة، وسألته عن الخطوة القادمة."></textarea>
 
@@ -445,6 +501,14 @@
       </div>
 
       <label class="toggle"><input type="checkbox" id="f-protocol"> طبّقت بروتوكول التدخل في اللحظة</label>
+
+      <fieldset class="checks">
+        <legend>ماذا حدث في سلوكي فعلاً؟</legend>
+        <label class="toggle"><input type="checkbox" data-behavior="asked"> طرحت سؤالاً حقيقياً عمّا يقوله</label>
+        <label class="toggle"><input type="checkbox" data-behavior="noInterrupt"> لم أقاطع</label>
+        <label class="toggle"><input type="checkbox" data-behavior="present"> بقيت حاضراً ومستمعاً (دون شرود)</label>
+        <label class="toggle"><input type="checkbox" data-behavior="noDevalue"> لم يصدر مني تعليق أو إشارة تبخيس</label>
+      </fieldset>
 
       <div class="btn-row">
         <button type="submit" class="btn btn-gold"><svg class="i"><use href="#i-check"/></svg> حفظ السجل</button>
@@ -469,7 +533,7 @@
   <!-- ===================== PROGRESS ===================== -->
   <section class="screen" id="screen-progress">
     <h2>مؤشرات التقدم</h2>
-    <p class="sub">الهدف ليس غياب الاستثارة، بل انخفاضها بعد الاستجابة وتكرار تطبيق البروتوكول.</p>
+    <p class="sub">الهدف ليس غياب الاستثارة، بل تغيّر السلوك: البقاء حاضراً دون مقاطعة أو تبخيس، وتطبيق البروتوكول بانتظام.</p>
     <div id="progress-body"></div>
   </section>
 
@@ -536,7 +600,7 @@
   <a href="#progress" data-nav="progress"><svg class="i"><use href="#i-chart"/></svg>التقدم</a>
 </nav>
 
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-msg"></span><button id="toast-action" type="button" hidden></button></div>
 
 <script>
 /* ============================================================
@@ -554,39 +618,97 @@ const QUESTIONS = [
   'ما الخطوة القادمة برأيك؟',
   'ما الذي تعلمته من هذه التجربة؟'
 ];
+const BEHAVIORS = [
+  ['asked', 'طرح سؤالاً'],
+  ['noInterrupt', 'لم يقاطع'],
+  ['present', 'بقي حاضراً'],
+  ['noDevalue', 'لم يبخّس']
+];
 
 /* ============================================================
-   Storage (guarded — storage can be unavailable)
-   ============================================================ */
-const STORAGE_KEY = 'tactical_logs_v1';
-const DRAFT_KEY = 'tactical_draft_v1';
+   Storage — schema v2 with one-way migration from v1
+   ============================================================
+   v1 (original dashboard / app 1.0): key tactical_logs_v1 = [ {id, date, situation, thought, intensity, response, ...} ]
+   v2: key tactical_logs_v2 = { schemaVersion: 2, savedAt, logs: [Entry] }
+   The v1 key is left untouched as a fallback copy; it is never written again. */
+const SCHEMA_VERSION = 2;
+const KEYS = {
+  logs: 'tactical_logs_v2',
+  draft: 'tactical_draft_v2',
+  moment: 'tactical_moment_v2',
+  legacyLogs: 'tactical_logs_v1',
+  legacyDraft: 'tactical_draft_v1'
+};
+const MOMENT_TTL = 60 * 60 * 1000; // an unfinished moment older than 1 h is treated as a new situation
 
 function load(key, fallback) {
   try { const v = JSON.parse(localStorage.getItem(key)); return v ?? fallback; } catch { return fallback; }
 }
 function save(key, value) {
   try { localStorage.setItem(key, JSON.stringify(value)); return true; }
-  catch { toast('تعذّر الحفظ على هذا الجهاز', true); return false; }
+  catch { toast('تعذّر الحفظ على هذا الجهاز', { type: 'error' }); return false; }
 }
 function remove(key) { try { localStorage.removeItem(key); } catch {} }
 
-// Normalise entries, including those saved by the original dashboard (date string + intensity).
+const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const clamp10 = (v) => (v == null || v === '' || isNaN(Number(v))) ? null : Math.max(0, Math.min(10, Number(v)));
+const str = (v) => (v == null ? '' : String(v));
+
+function normaliseBehaviors(b) {
+  if (!b || typeof b !== 'object') return null;
+  return { asked: !!b.asked, noInterrupt: !!b.noInterrupt, present: !!b.present, noDevalue: !!b.noDevalue };
+}
+
+// Converts any v1 or v2 entry into a v2 entry.
 function normalise(l) {
+  const legacy = l.intensity != null && l.before == null;
+  const numericId = typeof l.id === 'number' ? l.id : null;
   return {
-    id: l.id || Date.now() + Math.random(),
-    ts: l.ts || (typeof l.id === 'number' ? l.id : null),
-    date: l.date || '',
-    trigger: l.trigger || '',
-    situation: l.situation || '',
-    thought: l.thought || '',
-    signals: Array.isArray(l.signals) ? l.signals : [],
-    before: l.before ?? (l.intensity != null ? Number(l.intensity) : null),
-    after: l.after ?? null,
+    schemaVersion: SCHEMA_VERSION,
+    id: l.id != null ? String(l.id) : newId(),
+    ts: typeof l.ts === 'number' ? l.ts : (numericId && numericId > 1e12 ? Math.floor(numericId) : null),
+    date: str(l.date),
+    source: l.source || (legacy ? 'legacy' : 'manual'),
+    trigger: str(l.trigger),
+    situation: str(l.situation),
+    thought: str(l.thought),
+    signals: Array.isArray(l.signals) ? l.signals.map(str) : [],
+    before: clamp10(l.before ?? l.intensity),
+    after: clamp10(l.after),
+    question: str(l.question),
     protocol: !!l.protocol,
-    response: l.response || ''
+    behaviors: normaliseBehaviors(l.behaviors),
+    response: str(l.response)
   };
 }
-let logs = load(STORAGE_KEY, []).map(normalise);
+
+function saveLogs(list) {
+  return save(KEYS.logs, { schemaVersion: SCHEMA_VERSION, savedAt: Date.now(), logs: list });
+}
+
+function loadLogs() {
+  const v2 = load(KEYS.logs, null);
+  if (v2 && Array.isArray(v2.logs)) return v2.logs.map(normalise);
+  const v1 = load(KEYS.legacyLogs, null);
+  if (Array.isArray(v1) && v1.length) {
+    const migrated = v1.map(normalise);
+    saveLogs(migrated);
+    return migrated;
+  }
+  return [];
+}
+
+function migrateDraft() {
+  if (load(KEYS.draft, null)) return;
+  const d = load(KEYS.legacyDraft, null);
+  if (d) { save(KEYS.draft, { ...d, schemaVersion: SCHEMA_VERSION, source: 'moment' }); remove(KEYS.legacyDraft); }
+}
+
+let logs = loadLogs();
+migrateDraft();
+
+// Ask the browser not to evict local data under storage pressure (best effort).
+if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
 
 /* ============================================================
    Helpers
@@ -597,39 +719,47 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '
 const fmtDate = (l) => l.ts
   ? new Date(l.ts).toLocaleString('ar-EG', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
   : l.date;
+const fmtTime = (ts) => new Date(ts).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
 const lvl = (n) => n == null ? '' : n >= 8 ? 'lvl-high' : n >= 5 ? 'lvl-mid' : 'lvl-low';
+const arNum = (n) => Number(n).toLocaleString('ar-EG');
 
 let toastTimer;
-function toast(msg, isError) {
-  const t = $('#toast');
-  t.textContent = msg;
-  t.style.background = isError ? 'var(--red)' : 'var(--green)';
-  t.style.color = isError ? '#fff' : '#052e16';
-  t.classList.add('show');
+function toast(msg, { type = 'ok', action = null, duration = 2200 } = {}) {
+  const t = $('#toast'), btn = $('#toast-action');
+  $('#toast-msg').textContent = msg;
+  t.className = 'toast show' + (type === 'error' ? ' error' : type === 'neutral' ? ' neutral' : '');
+  btn.hidden = !action;
+  btn.onclick = null;
+  if (action) {
+    btn.textContent = action.label;
+    btn.onclick = () => { hideToast(); action.fn(); };
+  }
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  toastTimer = setTimeout(hideToast, duration);
 }
+function hideToast() { $('#toast').classList.remove('show'); $('#toast-action').onclick = null; }
 
-function bindRange(id) {
+function bindRange(id, onChange) {
   const r = $('#' + id), v = $('#' + id + '-val');
-  r.addEventListener('input', () => { v.textContent = r.value; });
+  r.addEventListener('input', () => { v.textContent = r.value; if (onChange) onChange(Number(r.value)); });
   return (val) => { if (val != null) r.value = val; v.textContent = r.value; };
 }
 
-function chip(label, group) {
+function chip(label, { single = false, onChange } = {}) {
   const b = document.createElement('button');
   b.type = 'button';
   b.className = 'chip';
   b.textContent = label;
   b.setAttribute('aria-pressed', 'false');
   b.addEventListener('click', () => {
-    if (group === 'single') {
-      $$('.chip', b.parentElement).forEach((c) => c !== b && c.setAttribute('aria-pressed', 'false'));
-    }
+    if (single) $$('.chip', b.parentElement).forEach((c) => c !== b && c.setAttribute('aria-pressed', 'false'));
     b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+    if (onChange) onChange();
   });
   return b;
 }
+const pressed = (sel) => $$(sel).filter((c) => c.getAttribute('aria-pressed') === 'true').map((c) => c.textContent);
+const setPressed = (sel, values) => $$(sel).forEach((c) => c.setAttribute('aria-pressed', values.includes(c.textContent) ? 'true' : 'false'));
 
 /* ============================================================
    Routing
@@ -645,7 +775,8 @@ function route() {
   const name = SCREENS.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'home';
   $$('.screen').forEach((s) => s.classList.toggle('active', s.id === 'screen-' + name));
   $$('nav.bottom a').forEach((a) => a.classList.toggle('on', a.dataset.nav === name));
-  if (name === 'moment') resetMoment();
+  if (name !== 'moment') stopBreath();
+  if (name === 'moment') enterMoment();
   if (name === 'log') prepareLogForm();
   if (name === 'archive') renderLogs();
   if (name === 'progress') renderProgress();
@@ -655,13 +786,32 @@ function route() {
 window.addEventListener('hashchange', route);
 
 /* ============================================================
-   Moment flow
-   ============================================================ */
-let step = 0;
-const setBefore = bindRange('m-before');
-const setAfter = bindRange('m-after');
+   Moment flow — resumable
+   ============================================================
+   Steps: 0 detect · 1 pause · 2 containment · 3 directive action · 4 closing rating.
+   The in-progress state is persisted on every change, so leaving the screen (or the app)
+   and coming back within MOMENT_TTL resumes where the user stopped. */
+const LAST_STEP = 4;
+let moment = null;
 
-$$('[data-group]').forEach((wrap) => SIGNALS[wrap.dataset.group].forEach((s) => wrap.appendChild(chip(s))));
+function newMoment() {
+  return { startedAt: Date.now(), updatedAt: 0, step: 0, signals: [], before: 5, after: null, question: '' };
+}
+function activeMoment() {
+  const m = load(KEYS.moment, null);
+  return m && m.updatedAt && Date.now() - m.updatedAt < MOMENT_TTL ? m : null;
+}
+function persistMoment() {
+  moment.updatedAt = Date.now();
+  save(KEYS.moment, moment);
+}
+
+const setBefore = bindRange('m-before', (v) => { moment.before = v; persistMoment(); });
+const setAfter = bindRange('m-after', (v) => { moment.after = v; persistMoment(); });
+
+$$('[data-group]').forEach((wrap) => SIGNALS[wrap.dataset.group].forEach((s) =>
+  wrap.appendChild(chip(s, { onChange: () => { moment.signals = pressed('#screen-moment .chip'); persistMoment(); } }))));
+
 QUESTIONS.forEach((q) => {
   const b = document.createElement('button');
   b.type = 'button';
@@ -669,32 +819,61 @@ QUESTIONS.forEach((q) => {
   b.textContent = q;
   b.setAttribute('aria-pressed', 'false');
   b.addEventListener('click', () => {
-    $$('.question').forEach((x) => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    const on = b.getAttribute('aria-pressed') !== 'true';
+    $$('.question').forEach((x) => x.setAttribute('aria-pressed', x === b && on ? 'true' : 'false'));
+    moment.question = on ? q : '';
+    persistMoment();
   });
   $('#questions').appendChild(b);
+  const opt = document.createElement('option');
+  opt.value = q;
+  $('#question-list').appendChild(opt);
 });
 
-function showStep(n) {
-  step = n;
-  $$('#screen-moment .step').forEach((s) => s.classList.toggle('active', Number(s.dataset.step) === n));
-  $$('#moment-progress i').forEach((b, i) => b.classList.toggle('on', i <= n));
-  window.scrollTo(0, 0);
+function enterMoment() {
+  const existing = activeMoment();
+  moment = existing || newMoment();
+  if (!existing) remove(KEYS.moment);
+  applyMoment(!!existing);
 }
-function nextStep() {
+
+function applyMoment(resumed) {
   stopBreath();
-  if (step === 3) setAfter(Math.max(0, Number($('#m-before').value) - 2));
-  showStep(Math.min(step + 1, 4));
-}
-function resetMoment() {
-  stopBreath();
-  $$('#screen-moment .chip, .question').forEach((c) => c.setAttribute('aria-pressed', 'false'));
-  setBefore(5);
-  setAfter(3);
+  setPressed('#screen-moment .chip', moment.signals);
+  $$('.question').forEach((x) => x.setAttribute('aria-pressed', x.textContent === moment.question ? 'true' : 'false'));
+  setBefore(moment.before);
+  setAfter(moment.after ?? Math.max(0, moment.before - 2));
   $('#breath-word').textContent = 'جاهز';
   $('#breath-sec').textContent = '';
   $('#breath-count').textContent = 'اضغط «ابدأ» وتنفّس مع الدائرة';
   $('#breath-btn').textContent = 'ابدأ';
-  showStep(0);
+  $('#moment-resumed').hidden = !resumed;
+  $('#moment-restart').hidden = !resumed;
+  if (resumed) $('#moment-started').textContent = fmtTime(moment.startedAt);
+  showStep(moment.step);
+}
+
+function showStep(n) {
+  moment.step = n;
+  $$('#screen-moment .step').forEach((s) => s.classList.toggle('active', Number(s.dataset.step) === n));
+  // 4 segments for the 4 protocol steps; the closing rating shows all of them complete.
+  $$('#moment-progress i').forEach((b, i) => b.classList.toggle('on', i <= n));
+  window.scrollTo(0, 0);
+}
+
+function nextStep() {
+  stopBreath();
+  const n = Math.min(moment.step + 1, LAST_STEP);
+  if (n === LAST_STEP && moment.after == null) setAfter(Math.max(0, moment.before - 2));
+  showStep(n);
+  persistMoment();
+  $('#moment-restart').hidden = false;
+}
+
+function restartMoment() {
+  remove(KEYS.moment);
+  moment = newMoment();
+  applyMoment(false);
 }
 
 // Breathing pacer: 3 cycles of 4 s inhale / 6 s exhale.
@@ -717,17 +896,17 @@ function startBreath() {
       c.style.transition = `transform ${IN}s ease-in-out`;
       c.style.transform = 'scale(1)';
       word.textContent = 'شهيق';
-      count.textContent = `النَّفَس ${i + 1} من ${CYCLES}`;
+      count.textContent = `النَّفَس ${arNum(i + 1)} من ${arNum(CYCLES)}`;
       if (navigator.vibrate) navigator.vibrate(30);
     });
-    for (let s = 0; s < IN; s++) at((t + s) * 1000, () => { sec.textContent = IN - s; });
+    for (let s = 0; s < IN; s++) at((t + s) * 1000, () => { sec.textContent = arNum(IN - s); });
     t += IN;
     at(t * 1000, () => {
       c.style.transition = `transform ${OUT}s ease-in-out`;
       c.style.transform = 'scale(.62)';
       word.textContent = 'زفير بطيء';
     });
-    for (let s = 0; s < OUT; s++) at((t + s) * 1000, () => { sec.textContent = OUT - s; });
+    for (let s = 0; s < OUT; s++) at((t + s) * 1000, () => { sec.textContent = arNum(OUT - s); });
     t += OUT;
   }
   at(t * 1000, () => {
@@ -739,70 +918,128 @@ function startBreath() {
   $('#breath-btn').textContent = 'إعادة';
 }
 
+function draftHasContent(d) {
+  return !!(d && (d.situation || d.thought || d.response || d.trigger || d.question || (d.signals && d.signals.length)));
+}
+
 function finishMoment(fillNow) {
-  const signals = $$('#screen-moment .chip[aria-pressed="true"]').map((c) => c.textContent);
-  const q = $('.question[aria-pressed="true"]');
+  const existing = load(KEYS.draft, null);
+  if (draftHasContent(existing) &&
+      !confirm('لديك مسودة سابقة لم تُحفظ في الأرشيف. هل تريد استبدالها بهذا الموقف؟')) return;
+
   const draft = {
-    ts: Date.now(),
-    signals,
-    before: Number($('#m-before').value),
+    schemaVersion: SCHEMA_VERSION,
+    source: 'moment',
+    ts: moment.startedAt,
+    trigger: '',
+    situation: '',
+    thought: moment.signals.filter((s) => SIGNALS.mind.includes(s)).join('، '),
+    signals: moment.signals,
+    before: moment.before,
     after: Number($('#m-after').value),
+    question: moment.question,
     protocol: true,
-    response: q ? `طبّقت البروتوكول وسألت: «${q.textContent}»` : 'طبّقت البروتوكول وطرحت سؤالاً حول ما يقوله.'
+    // Only what the flow actually establishes is pre-filled; the rest is for the user to confirm.
+    behaviors: { asked: !!moment.question, noInterrupt: false, present: false, noDevalue: false },
+    response: ''
   };
-  save(DRAFT_KEY, draft);
+  if (!save(KEYS.draft, draft)) return;
+  remove(KEYS.moment);
   if (fillNow) go('log');
   else { toast('حُفظت المسودة — أكملها من «تسجيل موقف»'); go('home'); }
 }
 
 /* ============================================================
-   Log form
+   Log form — every field auto-saves to the draft
    ============================================================ */
-const setFBefore = bindRange('f-before');
-const setFAfter = bindRange('f-after');
-TRIGGERS.forEach((t) => $('#trigger-chips').appendChild(chip(t, 'single')));
+const setFBefore = bindRange('f-before', () => saveDraftFromForm());
+const setFAfter = bindRange('f-after', () => saveDraftFromForm());
+TRIGGERS.forEach((t) => $('#trigger-chips').appendChild(chip(t, { single: true, onChange: () => saveDraftFromForm() })));
+
+// Metadata that the form does not edit but must survive into the saved entry.
+let draftMeta = { ts: null, signals: [], source: 'manual' };
+
+function readForm() {
+  const behaviors = {};
+  $$('[data-behavior]').forEach((c) => { behaviors[c.dataset.behavior] = c.checked; });
+  return {
+    trigger: pressed('#trigger-chips .chip')[0] || '',
+    situation: $('#f-situation').value.trim(),
+    thought: $('#f-thought').value.trim(),
+    before: Number($('#f-before').value),
+    after: Number($('#f-after').value),
+    question: $('#f-question').value.trim(),
+    protocol: $('#f-protocol').checked,
+    behaviors,
+    response: $('#f-response').value.trim()
+  };
+}
+
+function fillForm(d) {
+  d = d || {};
+  setPressed('#trigger-chips .chip', d.trigger ? [d.trigger] : []);
+  $('#f-situation').value = d.situation || '';
+  $('#f-thought').value = d.thought || '';
+  setFBefore(d.before ?? 5);
+  setFAfter(d.after ?? 3);
+  $('#f-question').value = d.question || '';
+  $('#f-protocol').checked = !!d.protocol;
+  const b = d.behaviors || {};
+  $$('[data-behavior]').forEach((c) => { c.checked = !!b[c.dataset.behavior]; });
+  $('#f-response').value = d.response || '';
+
+  const sig = (d.signals || []);
+  $('#f-signals-wrap').hidden = !sig.length;
+  $('#f-signals').innerHTML = sig.map((s) => `<span>${esc(s)}</span>`).join('');
+  $('#draft-bar').hidden = !d.schemaVersion;
+}
+
+function saveDraftFromForm() {
+  const f = readForm();
+  const touched = f.trigger || f.situation || f.thought || f.question || f.response || f.protocol ||
+    Object.values(f.behaviors).some(Boolean) || draftMeta.ts;
+  if (!touched) { remove(KEYS.draft); $('#draft-bar').hidden = true; return; }
+  save(KEYS.draft, { schemaVersion: SCHEMA_VERSION, ...draftMeta, ...f });
+  $('#draft-bar').hidden = false;
+}
+
+let draftTimer;
+$('#log-form').addEventListener('input', (e) => {
+  if (e.target.id === 'f-question' && e.target.value.trim()) $('[data-behavior="asked"]').checked = true;
+  clearTimeout(draftTimer);
+  draftTimer = setTimeout(saveDraftFromForm, 300);
+});
 
 function prepareLogForm() {
-  const d = load(DRAFT_KEY, null);
-  if (!d) return;
-  setFBefore(d.before);
-  setFAfter(d.after);
-  $('#f-protocol').checked = !!d.protocol;
-  if (!$('#f-response').value) $('#f-response').value = d.response || '';
-  if (!$('#f-thought').value && d.signals && d.signals.length) {
-    const mind = d.signals.filter((s) => SIGNALS.mind.includes(s));
-    if (mind.length) $('#f-thought').value = mind.join('، ');
-  }
+  const d = load(KEYS.draft, null);
+  draftMeta = d
+    ? { ts: d.ts ?? null, signals: Array.isArray(d.signals) ? d.signals : [], source: d.source || 'manual' }
+    : { ts: null, signals: [], source: 'manual' };
+  fillForm(d);
+}
+
+function discardDraft() {
+  const d = load(KEYS.draft, null);
+  remove(KEYS.draft);
+  prepareLogForm();
+  if (d) toast('حُذفت المسودة', { type: 'neutral', duration: 8000, action: { label: 'تراجع', fn: () => { save(KEYS.draft, d); prepareLogForm(); } } });
 }
 
 $('#log-form').addEventListener('submit', (e) => {
   e.preventDefault();
-  const d = load(DRAFT_KEY, null);
-  const trig = $('#trigger-chips .chip[aria-pressed="true"]');
-  const entry = normalise({
-    id: Date.now(),
-    ts: d ? d.ts : Date.now(),
-    trigger: trig ? trig.textContent : '',
-    situation: $('#f-situation').value.trim(),
-    thought: $('#f-thought').value.trim(),
-    signals: d ? d.signals : [],
-    before: Number($('#f-before').value),
-    after: Number($('#f-after').value),
-    protocol: $('#f-protocol').checked,
-    response: $('#f-response').value.trim()
-  });
+  clearTimeout(draftTimer);
+  const entry = normalise({ id: newId(), ts: draftMeta.ts || Date.now(), signals: draftMeta.signals, source: draftMeta.source, ...readForm() });
   logs.push(entry);
-  if (!save(STORAGE_KEY, logs)) { logs.pop(); return; }
-  remove(DRAFT_KEY);
-  e.target.reset();
-  $$('#trigger-chips .chip').forEach((c) => c.setAttribute('aria-pressed', 'false'));
-  setFBefore(5); setFAfter(3);
+  if (!saveLogs(logs)) { logs.pop(); return; }
+  remove(KEYS.draft);
+  draftMeta = { ts: null, signals: [], source: 'manual' };
+  fillForm(null);
   toast('تم حفظ السجل');
   go('archive');
 });
 
 /* ============================================================
-   Archive
+   Archive — delete with undo
    ============================================================ */
 function renderLogs() {
   const box = $('#logs');
@@ -811,19 +1048,22 @@ function renderLogs() {
     box.innerHTML = `<div class="card empty"><svg class="i"><use href="#i-box"/></svg>لا توجد سجلات بعد. ابدأ برصد استجاباتك.</div>`;
     return;
   }
-  box.innerHTML = [...logs].reverse().map((l) => `
+  box.innerHTML = [...logs].sort((a, b) => (b.ts || 0) - (a.ts || 0)).map((l) => `
     <article class="card log">
       <div class="log-head">
         <span class="log-date">${esc(fmtDate(l))}</span>
         <span>
           ${l.trigger ? `<span class="badge">${esc(l.trigger)}</span>` : ''}
-          <button class="del" aria-label="حذف السجل" onclick="deleteLog('${esc(String(l.id))}')"><svg class="i"><use href="#i-trash"/></svg></button>
+          <button class="del" aria-label="حذف السجل" data-del="${esc(l.id)}"><svg class="i"><use href="#i-trash"/></svg></button>
         </span>
       </div>
       <dl>
-        <dt>الموقف</dt><dd>${esc(l.situation)}</dd>
-        <dt>التقييم التلقائي</dt><dd class="thought">${esc(l.thought)}</dd>
-        <dt>الاستجابة التكتيكية</dt><dd class="response">${esc(l.response)}</dd>
+        ${l.situation ? `<dt>الموقف</dt><dd>${esc(l.situation)}</dd>` : ''}
+        ${l.thought ? `<dt>التقييم التلقائي</dt><dd class="thought">${esc(l.thought)}</dd>` : ''}
+        ${l.question ? `<dt>السؤال الذي طرحته</dt><dd>${esc(l.question)}</dd>` : ''}
+        ${l.response ? `<dt>الاستجابة التكتيكية</dt><dd class="response">${esc(l.response)}</dd>` : ''}
+        ${l.behaviors ? `<dt>السلوك الفعلي</dt><dd class="signal-list">${BEHAVIORS.map(([k, label]) =>
+          `<span style="${l.behaviors[k] ? 'color:var(--green);border-color:rgba(74,222,128,.4)' : ''}">${l.behaviors[k] ? '✓' : '✗'} ${label}</span>`).join('')}</dd>` : ''}
       </dl>
       <div class="intensity">
         <span class="${lvl(l.before)}">${l.before ?? '–'}/10</span>
@@ -833,18 +1073,38 @@ function renderLogs() {
     </article>`).join('');
 }
 
+$('#logs').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-del]');
+  if (b) deleteLog(b.dataset.del);
+});
+
 function deleteLog(id) {
-  if (!confirm('حذف هذا السجل؟')) return;
-  logs = logs.filter((l) => String(l.id) !== id);
-  save(STORAGE_KEY, logs);
+  const index = logs.findIndex((l) => l.id === id);
+  if (index < 0) return;
+  const [removed] = logs.splice(index, 1);
+  saveLogs(logs);
   renderLogs();
+  toast('حُذف السجل', {
+    type: 'neutral', duration: 8000,
+    action: { label: 'تراجع', fn: () => {
+      if (logs.some((l) => l.id === removed.id)) return;
+      logs.splice(Math.min(index, logs.length), 0, removed);
+      saveLogs(logs);
+      renderLogs();
+    } }
+  });
 }
 
 function clearLogs() {
-  if (!confirm('هل أنت متأكد من مسح الأرشيف بالكامل؟ لا يمكن التراجع عن هذا الإجراء. يُنصح بتصدير نسخة احتياطية أولاً.')) return;
+  if (!confirm(`سيُحذف ${arNum(logs.length)} سجلاً من هذا الجهاز. يُنصح بتصدير «نسخة احتياطية» أولاً.\nهل تريد المتابعة؟`)) return;
+  const backup = logs;
   logs = [];
-  remove(STORAGE_KEY);
+  saveLogs(logs);
   renderLogs();
+  toast('تم مسح الأرشيف', {
+    type: 'neutral', duration: 10000,
+    action: { label: 'تراجع', fn: () => { logs = [...backup, ...logs]; saveLogs(logs); renderLogs(); } }
+  });
 }
 
 function download(name, content, type) {
@@ -859,19 +1119,24 @@ function download(name, content, type) {
 const stamp = () => new Date().toISOString().slice(0, 10);
 
 function exportCSV() {
-  if (!logs.length) return toast('لا توجد سجلات للتصدير', true);
-  const cols = ['التاريخ', 'نوع المحفز', 'الموقف', 'التقييم التلقائي', 'المؤشرات', 'الاستثارة قبل', 'الاستثارة بعد', 'البروتوكول', 'الاستجابة'];
+  if (!logs.length) return toast('لا توجد سجلات للتصدير', { type: 'error' });
+  const yn = (v) => v == null ? '' : v ? 'نعم' : 'لا';
+  const cols = ['التاريخ', 'نوع المحفز', 'الموقف', 'التقييم التلقائي', 'المؤشرات', 'الاستثارة قبل', 'الاستثارة بعد',
+    'البروتوكول', 'السؤال', ...BEHAVIORS.map(([, label]) => label), 'الاستجابة', 'المصدر'];
   const q = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
   const rows = logs.map((l) => [
     l.ts ? new Date(l.ts).toLocaleString('ar-EG') : l.date, l.trigger, l.situation, l.thought,
-    l.signals.join('، '), l.before, l.after, l.protocol ? 'نعم' : 'لا', l.response
+    l.signals.join('، '), l.before, l.after, yn(l.protocol), l.question,
+    ...BEHAVIORS.map(([k]) => yn(l.behaviors ? l.behaviors[k] : null)), l.response, l.source
   ].map(q).join(','));
   download(`سجل-المواقف-${stamp()}.csv`, '﻿' + [cols.map(q).join(','), ...rows].join('\r\n'), 'text/csv;charset=utf-8');
 }
 
 function exportJSON() {
-  if (!logs.length) return toast('لا توجد سجلات للتصدير', true);
-  download(`نسخة-احتياطية-${stamp()}.json`, JSON.stringify({ app: 'tactical', version: 1, logs }, null, 2), 'application/json');
+  if (!logs.length) return toast('لا توجد سجلات للتصدير', { type: 'error' });
+  download(`نسخة-احتياطية-${stamp()}.json`,
+    JSON.stringify({ app: 'tactical', schemaVersion: SCHEMA_VERSION, exportedAt: new Date().toISOString(), logs }, null, 2),
+    'application/json');
 }
 
 $('#import-file').addEventListener('change', async (e) => {
@@ -880,23 +1145,29 @@ $('#import-file').addEventListener('change', async (e) => {
   if (!file) return;
   try {
     const data = JSON.parse(await file.text());
-    const incoming = (Array.isArray(data) ? data : data.logs || []).map(normalise);
-    const known = new Set(logs.map((l) => String(l.id)));
-    const fresh = incoming.filter((l) => !known.has(String(l.id)));
+    const raw = Array.isArray(data) ? data : data.logs;       // v1 array or v2 envelope
+    if (!Array.isArray(raw)) throw new Error('bad format');
+    const incoming = raw.filter((l) => l && typeof l === 'object').map(normalise);
+    const known = new Set(logs.map((l) => l.id));
+    const fresh = incoming.filter((l) => !known.has(l.id));
     logs = [...logs, ...fresh].sort((a, b) => (a.ts || 0) - (b.ts || 0));
-    save(STORAGE_KEY, logs);
+    saveLogs(logs);
     renderLogs();
-    toast(`تمت استعادة ${fresh.length} سجل`);
+    toast(fresh.length ? `تمت استعادة ${arNum(fresh.length)} سجل` : 'كل السجلات موجودة مسبقاً');
   } catch {
-    toast('الملف غير صالح', true);
+    toast('الملف غير صالح', { type: 'error' });
   }
 });
 
 /* ============================================================
    Progress
-   ============================================================ */
-function avg(arr) { return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : null; }
+   ============================================================
+   Arousal before/after is self-reported and taken minutes apart, so it is shown as
+   "change in arousal", not as an outcome. The behavioural indicators are the primary signal. */
+const avg = (arr) => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : null;
 const f1 = (n) => n == null ? '–' : n.toLocaleString('ar-EG', { maximumFractionDigits: 1 });
+const pct = (k, n) => n ? arNum(Math.round(100 * k / n)) + '٪' : '–';
+const signed = (n) => n == null ? '–' : n < 0 ? '−' + f1(-n) : n > 0 ? '+' + f1(n) : arNum(0);
 
 function renderProgress() {
   const box = $('#progress-body');
@@ -908,29 +1179,41 @@ function renderProgress() {
   const thisWeek = logs.filter((l) => l.ts && l.ts >= week);
   const befores = logs.map((l) => l.before).filter((n) => n != null);
   const paired = logs.filter((l) => l.before != null && l.after != null);
-  const drop = avg(paired.map((l) => l.before - l.after));
-  const protoRate = Math.round(100 * logs.filter((l) => l.protocol).length / logs.length);
+  const change = avg(paired.map((l) => l.after - l.before));
+  const proto = logs.filter((l) => l.protocol).length;
 
-  const counts = {};
-  logs.forEach((l) => { if (l.trigger) counts[l.trigger] = (counts[l.trigger] || 0) + 1; });
-  const freq = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  const withB = logs.filter((l) => l.behaviors);
+  const countB = (k) => withB.filter((l) => l.behaviors[k]).length;
+  const nonDefensive = withB.filter((l) => l.behaviors.noInterrupt && l.behaviors.present && l.behaviors.noDevalue).length;
 
-  const sigCounts = {};
-  logs.forEach((l) => l.signals.forEach((s) => { sigCounts[s] = (sigCounts[s] || 0) + 1; }));
-  const sigs = Object.entries(sigCounts).sort((a, b) => b[1] - a[1]).slice(0, 4);
+  const tally = (items) => {
+    const c = {};
+    items.forEach((x) => { if (x) c[x] = (c[x] || 0) + 1; });
+    return Object.entries(c).sort((a, b) => b[1] - a[1]);
+  };
+  const freq = tally(logs.map((l) => l.trigger));
+  const sigs = tally(logs.flatMap((l) => l.signals)).slice(0, 4);
+  const rows = (list) => list.map(([k, v]) => `<div class="freq"><span>${esc(k)}</span><b>${arNum(v)}</b></div>`).join('');
 
   box.innerHTML = `
-    <div class="stats">
-      <div class="stat"><b>${logs.length.toLocaleString('ar-EG')}</b><span>إجمالي المواقف المرصودة</span></div>
-      <div class="stat"><b>${thisWeek.length.toLocaleString('ar-EG')}</b><span>خلال آخر ٧ أيام</span></div>
-      <div class="stat"><b>${f1(avg(befores))}</b><span>متوسط الاستثارة وقت الموقف</span></div>
-      <div class="stat"><b style="color:var(--green)">${drop == null ? '–' : '−' + f1(drop)}</b><span>متوسط الانخفاض بعد الاستجابة</span></div>
-      <div class="stat" style="grid-column:1/-1"><b style="color:var(--gold)">${protoRate.toLocaleString('ar-EG')}٪</b><span>نسبة المواقف التي طُبّق فيها البروتوكول</span></div>
+    <div class="card">
+      <b>المؤشرات السلوكية</b>
+      <p class="sub" style="margin:2px 0 6px">${withB.length ? `من ${arNum(withB.length)} موقفاً سُجّل فيها السلوك الفعلي` : 'سجّل «ماذا حدث في سلوكي فعلاً؟» عند كل موقف لتظهر هذه المؤشرات.'}</p>
+      <div class="rate"><span>مواقف دون سلوك دفاعي <small style="color:var(--muted)">(لم يقاطع، بقي حاضراً، لم يبخّس)</small></span><b style="color:var(--gold)">${pct(nonDefensive, withB.length)}</b></div>
+      <div class="rate"><span>طرح سؤالاً حقيقياً</span><b>${pct(countB('asked'), withB.length)}</b></div>
+      <div class="rate"><span>لم يقاطع</span><b>${pct(countB('noInterrupt'), withB.length)}</b></div>
+      <div class="rate"><span>بقي حاضراً ومستمعاً</span><b>${pct(countB('present'), withB.length)}</b></div>
+      <div class="rate"><span>لم يصدر تبخيس</span><b>${pct(countB('noDevalue'), withB.length)}</b></div>
+      <div class="rate"><span>طبّق بروتوكول التدخل</span><b>${pct(proto, logs.length)}</b></div>
     </div>
-    ${freq.length ? `<div class="card" style="margin-top:12px"><b>أكثر المحفزات تكراراً</b>
-      ${freq.map(([k, v]) => `<div class="freq"><span>${esc(k)}</span><b>${v.toLocaleString('ar-EG')}</b></div>`).join('')}</div>` : ''}
-    ${sigs.length ? `<div class="card"><b>أكثر مؤشرات الرصد المبكر ظهوراً</b>
-      ${sigs.map(([k, v]) => `<div class="freq"><span>${esc(k)}</span><b>${v.toLocaleString('ar-EG')}</b></div>`).join('')}</div>` : ''}
+    <div class="stats">
+      <div class="stat"><b>${arNum(logs.length)}</b><span>إجمالي المواقف المرصودة</span></div>
+      <div class="stat"><b>${arNum(thisWeek.length)}</b><span>خلال آخر ٧ أيام</span></div>
+      <div class="stat"><b>${f1(avg(befores))}</b><span>متوسط الاستثارة وقت الموقف</span><em>تقدير ذاتي ٠–١٠</em></div>
+      <div class="stat"><b style="color:${change != null && change < 0 ? 'var(--green)' : 'var(--text)'}">${signed(change)}</b><span>متوسط التغيّر في الاستثارة</span><em>تقدير ذاتي قبل/بعد · ${arNum(paired.length)} موقف</em></div>
+    </div>
+    ${freq.length ? `<div class="card" style="margin-top:12px"><b>أكثر المحفزات تكراراً</b>${rows(freq)}</div>` : ''}
+    ${sigs.length ? `<div class="card"><b>أكثر مؤشرات الرصد المبكر ظهوراً</b>${rows(sigs)}</div>` : ''}
   `;
 }
 
@@ -938,10 +1221,14 @@ function renderProgress() {
    Home
    ============================================================ */
 function renderHome() {
-  const draft = load(DRAFT_KEY, null);
+  const draft = load(KEYS.draft, null);
+  const m = activeMoment();
+  $('#sos-sub').textContent = m
+    ? `استكمال الموقف الجاري · الخطوة ${arNum(Math.min(m.step + 1, 4))} من ٤`
+    : '٤ خطوات قصيرة ثم تقييم سريع';
   $('#home-count').textContent = draft
     ? 'لديك مسودة لم تكتمل'
-    : logs.length ? `${logs.length.toLocaleString('ar-EG')} موقف مسجّل` : 'لا توجد سجلات بعد';
+    : logs.length ? `${arNum(logs.length)} موقف مسجّل` : 'لا توجد سجلات بعد';
 }
 
 /* ============================================================

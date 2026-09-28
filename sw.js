@@ -1,6 +1,7 @@
 // Offline support: precache the app shell, network-first for pages, cache-first for everything else.
-const CACHE = 'tactical-v1';
-const SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png'];
+const CACHE = 'tactical-v2';
+const FONTS = [400, 600, 700, 800].flatMap((w) => [`./fonts/cairo-arabic-${w}-normal.woff2`, `./fonts/cairo-latin-${w}-normal.woff2`]);
+const SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', ...FONTS];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
