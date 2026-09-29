@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة القيادة التكتيكية | Tactical Dashboard</title>
+    
+    <!-- تحميل خطوط عربية احترافية -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- تحميل أيقونات FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- تحميل Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- إعدادات Tailwind لتخصيص الألوان (طابع احترافي تنفيذي) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        executive: {
+                            dark: '#0f172a', // Slate 900
+                            card: '#1e293b', // Slate 800
+                            accent: '#d4af37', // Metallic Gold
+                            accentHover: '#b5952f',
+                            text: '#f8fafc', // Slate 50
+                            muted: '#94a3b8', // Slate 400
+                            danger: '#ef4444',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        /* تأثيرات الإضاءة للبطاقات */
+        .executive-card {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.3s ease;
+        }
+        .executive-card:hover {
+            border-color: rgba(212, 175, 55, 0.6);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        /* إخفاء شريط التمرير مع الحفاظ على الوظيفة */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d4af37; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans antialiased">
+
+    <!-- شريط التنقل العلوي -->
+    <nav class="bg-executive-card border-b border-executive-accent/30 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full border-2 border-executive-accent flex items-center justify-center bg-executive-dark text-executive-accent">
+                        <i class="fa-solid fa-chess-king text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-executive-text tracking-wide">القيادة التكتيكية</h1>
+                        <p class="text-xs text-executive-accent">نظام الإدارة التنفيذية للذات</p>
+                    </div>
+                </div>
+                <div class="flex space-x-reverse space-x-2 sm:space-x-4">
+                    <button id="btn-flashcard" onclick="switchTab('flashcard')" class="px-3 sm:px-4 py-2 rounded text-sm sm:text-base font-semibold transition-colors duration-200 bg-executive-accent text-executive-dark">
+                        <i class="fa-solid fa-bolt ml-1 sm:ml-2"></i> الوعي التكتيكي
+                    </button>
+                    <button id="btn-tracker" onclick="switchTab('tracker')" class="px-3 sm:px-4 py-2 rounded text-sm sm:text-base font-semibold transition-colors duration-200 bg-transparent text-executive-muted hover:text-executive-accent">
+                        <i class="fa-solid fa-chart-line ml-1 sm:ml-2"></i> الرصد الاستراتيجي
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <!-- القسم الأول: بطاقة الوعي التكتيكي (Flashcard) -->
+        <section id="view-flashcard" class="block animate-fade-in">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-executive-accent"></i>
+                    مؤشر الوعي التكتيكي
+                </h2>
+                <p class="text-executive-muted mt-2">إدارة الاستجابات الدفاعية وتوجيه الانفعالات بذكاء استراتيجي.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- الرصد المبكر -->
+                <div class="executive-card rounded-xl p-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-2 h-full bg-red-500/80"></div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-radar text-red-400 ml-2"></i> نظام الرصد المبكر</h3>
+                        <span class="text-xs bg-red-500/20 text-red-300 px-2 py-1 rounded border border-red-500/30">تحليل الموقف</span>
+                    </div>
+                    <p class="text-sm text-executive-accent mb-3 font-semibold">[مؤشرات تفعيل نمط المتعالي / التبخيس الآن]:</p>
+                    <ul class="space-y-3 text-sm text-gray-300">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-heart-pulse text-executive-muted mt-1 text-xs"></i>
+                            <span><strong class="text-white">جسدياً:</strong> أشعر بتململ، توتر في الفك، أو رغبة ملحة في المقاطعة وتغيير مسار الحديث.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-brain text-executive-muted mt-1 text-xs"></i>
+                            <span><strong class="text-white">ذهنياً:</strong> أعتقد أن المتحدث ممل، أو أن ما يقوله / يفعله تافه ولا يستحق وقتي أو تقديري.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-person-walking-arrow-right text-executive-muted mt-1 text-xs"></i>
+                            <span><strong class="text-white">سلوكياً:</strong> بدأت في الانفصال ذهنياً (الشرود)، أو أجهز رداً يثبت تفوقي بدلاً من الاستماع.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- التحليل الموضوعي -->
+                <div class="executive-card rounded-xl p-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-2 h-full bg-blue-500/80"></div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-microchip text-blue-400 ml-2"></i> التحليل الموضوعي</h3>
+                        <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded border border-blue-500/30">معالجة البيانات</span>
+                    </div>
+                    <p class="text-sm text-executive-accent mb-3 font-semibold">[ما الذي يحدث في كواليس عقلي؟]:</p>
+                    <ul class="space-y-3 text-sm text-gray-300">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-microscope text-executive-muted mt-1 text-xs"></i>
+                            <span>نظامي النفسي يقرأ هذا الموقف (نجاح الآخر، أو عدم كوني في المركز) كتهديد خفي لمكانتي.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-masks-theater text-executive-muted mt-1 text-xs"></i>
+                            <span>لدي رغبة لاواعية في "تبخيس" الآخر لأستعيد توازني وأشعر بالسيطرة المؤقتة.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-exclamation text-executive-accent mt-1 text-xs"></i>
+                            <span><strong class="text-executive-accent">الحقيقة:</strong> هذا الرد ليس دليلاً على قوتي، بل هو ميكانيزم دفاعي (رد فعل آلي) يهدر طاقتي العقلية.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- التكلفة الاستراتيجية -->
+                <div class="executive-card rounded-xl p-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-2 h-full bg-orange-500/80"></div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-chart-pie text-orange-400 ml-2"></i> التكلفة الاستراتيجية</h3>
+                        <span class="text-xs bg-orange-500/20 text-orange-300 px-2 py-1 rounded border border-orange-500/30">تقييم المخاطر</span>
+                    </div>
+                    <p class="text-sm text-executive-accent mb-3 font-semibold">[لماذا يجب أن أوقف هذا النمط الآن؟]:</p>
+                    <ul class="space-y-3 text-sm text-gray-300">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-eye-slash text-executive-muted mt-1 text-xs"></i>
+                            <span><strong class="text-white">فقدان المعلومات:</strong> الانفصال الذهني يجعلني أفقد تفاصيل قد أستفيد منها لاحقاً.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-user-tie text-executive-muted mt-1 text-xs"></i>
+                            <span><strong class="text-white">الضرر بالصورة العامة:</strong> إظهار الملل أو تبخيس الآخرين يجعلني أبدو مضطراً لإثبات تفوقي، وهو عكس صورة الشخصية القيادية الواثقة حقاً.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-bridge-water text-executive-muted mt-1 text-xs"></i>
+                            <span><strong class="text-white">الخسارة بعيدة المدى:</strong> تدمير جسور التواصل مع حلفاء أو شركاء محتملين بسبب رد فعل دفاعي لحظي.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- بروتوكول التدخل -->
+                <div class="executive-card rounded-xl p-6 relative overflow-hidden border-executive-accent border-2">
+                    <div class="absolute top-0 right-0 w-2 h-full bg-executive-accent"></div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-power-off text-executive-accent ml-2"></i> بروتوكول التدخل</h3>
+                        <span class="text-xs bg-executive-accent/20 text-executive-accent px-2 py-1 rounded border border-executive-accent/50">إجراء فوري</span>
+                    </div>
+                    <p class="text-sm text-executive-accent mb-3 font-semibold">[خطوات استعادة السيطرة الذكية]:</p>
+                    <ul class="space-y-4 text-sm text-gray-300">
+                        <li class="flex items-center gap-3 bg-executive-dark p-3 rounded border border-gray-700">
+                            <div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-executive-accent font-bold">1</div>
+                            <span><strong class="text-white">الإيقاف التكتيكي:</strong> تنفس ببطء (3 ثوانٍ). أنا أختار البقاء حاضراً لأنني أمتلك السيطرة، ولست مجبراً.</span>
+                        </li>
+                        <li class="flex items-center gap-3 bg-executive-dark p-3 rounded border border-gray-700">
+                            <div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-executive-accent font-bold">2</div>
+                            <span><strong class="text-white">الاحتواء المعرفي:</strong> لست مضطراً للمنافسة الآن. قيمتي لا تتأثر بحديث هذا الشخص أو إنجازاته. مساحتي محفوظة ومستقلة.</span>
+                        </li>
+                        <li class="flex items-center gap-3 bg-executive-dark p-3 rounded border border-gray-700">
+                            <div class="w-8 h-8 rounded-full bg-executive-accent flex items-center justify-center text-executive-dark font-bold">3</div>
+                            <span><strong class="text-white">إجراء توجيهي:</strong> سأطرح سؤالاً واحداً حول ما يقوله. هذا يعيدني كـ "مدير للحوار" استراتيجياً دون الحاجة للتقليل منه.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- القسم الثاني: سجل المراقبة الاستراتيجي (Homework) -->
+        <section id="view-tracker" class="hidden animate-fade-in">
+            <div class="mb-6 flex justify-between items-end">
+                <div>
+                    <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-crosshairs text-executive-accent"></i>
+                        مؤشر التقييم التنافسي (سجل الرصد)
+                    </h2>
+                    <p class="text-executive-muted mt-2">تحليل المواقف التنافسية وإعادة صياغتها كفرص لإثبات الكفاءة الذاتية بهدوء.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- نموذج الإدخال -->
+                <div class="lg:col-span-1 executive-card rounded-xl p-6 h-fit">
+                    <h3 class="text-lg font-bold text-white mb-4 border-b border-gray-700 pb-2">تسجيل حدث جديد</h3>
+                    <form id="tracker-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-300 mb-1">الموقف / المحفز الخارجي</label>
+                            <textarea id="input-situation" required rows="2" class="w-full bg-executive-dark border border-gray-600 rounded p-2 text-sm text-white focus:outline-none focus:border-executive-accent transition-colors placeholder-gray-500" placeholder="مثال: زميلي حصل على إشادة من المدير في الاجتماع..."></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-300 mb-1">التقييم التلقائي (الافتراض الدفاعي)</label>
+                            <textarea id="input-thought" required rows="2" class="w-full bg-executive-dark border border-gray-600 rounded p-2 text-sm text-white focus:outline-none focus:border-red-400 transition-colors placeholder-gray-500" placeholder="مثال: هو لا يستحق، مديري لا يفهم، يجب أن أثبت خطأه..."></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-300 mb-1">مؤشر الاستثارة الداخلية (1-10)</label>
+                            <div class="flex items-center gap-3">
+                                <input type="range" id="input-intensity" min="1" max="10" value="5" class="w-full accent-executive-accent" oninput="document.getElementById('intensity-val').innerText = this.value">
+                                <span id="intensity-val" class="text-white font-bold bg-gray-700 px-2 py-1 rounded">5</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-300 mb-1">الاستجابة التكتيكية البديلة</label>
+                            <textarea id="input-response" required rows="2" class="w-full bg-executive-dark border border-gray-600 rounded p-2 text-sm text-white focus:outline-none focus:border-green-400 transition-colors placeholder-gray-500" placeholder="مثال: حافظت على هدوئي، قمت بتهنئته بكلمة واحدة، وركزت على مهامي القادمة بثقة."></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full bg-executive-accent hover:bg-executive-accentHover text-executive-dark font-bold py-2 px-4 rounded transition-colors shadow-lg mt-2">
+                            <i class="fa-solid fa-check mr-2"></i> حفظ السجل التكتيكي
+                        </button>
+                    </form>
+                </div>
+
+                <!-- عرض السجلات السابقة -->
+                <div class="lg:col-span-2 executive-card rounded-xl p-6">
+                    <h3 class="text-lg font-bold text-white mb-4 border-b border-gray-700 pb-2 flex justify-between items-center">
+                        <span>أرشيف التقييمات التكتيكية</span>
+                        <button onclick="clearLogs()" class="text-xs text-red-400 hover:text-red-300 bg-red-900/20 px-2 py-1 rounded">
+                            <i class="fa-solid fa-trash"></i> مسح الأرشيف
+                        </button>
+                    </h3>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-right text-gray-300">
+                            <thead class="text-xs text-executive-accent uppercase bg-executive-dark border-b border-gray-700">
+                                <tr>
+                                    <th scope="col" class="px-4 py-3 rounded-tr-lg">التاريخ</th>
+                                    <th scope="col" class="px-4 py-3 w-1/4">الموقف المحفز</th>
+                                    <th scope="col" class="px-4 py-3 w-1/4">التقييم (الفكرة)</th>
+                                    <th scope="col" class="px-4 py-3 text-center">الحدة</th>
+                                    <th scope="col" class="px-4 py-3 rounded-tl-lg">الاستجابة التكتيكية</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logs-container" class="divide-y divide-gray-700/50">
+                                <!-- سيتم تعبئة السجلات هنا بواسطة JavaScript -->
+                                <tr id="empty-state">
+                                    <td colspan="5" class="px-4 py-8 text-center text-gray-500">
+                                        <i class="fa-solid fa-box-open text-3xl mb-2 block"></i>
+                                        لا توجد سجلات تكتيكية بعد. ابدأ برصد استجاباتك.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- سكربت تفاعل التطبيق -->
+    <script>
+        // دالة التبديل بين التبويبات
+        function switchTab(tabId) {
+            // تحديث الأزرار
+            const btnFlashcard = document.getElementById('btn-flashcard');
+            const btnTracker = document.getElementById('btn-tracker');
+            
+            // تحديث العرض
+            const viewFlashcard = document.getElementById('view-flashcard');
+            const viewTracker = document.getElementById('view-tracker');
+
+            if (tabId === 'flashcard') {
+                btnFlashcard.className = "px-3 sm:px-4 py-2 rounded text-sm sm:text-base font-semibold transition-colors duration-200 bg-executive-accent text-executive-dark";
+                btnTracker.className = "px-3 sm:px-4 py-2 rounded text-sm sm:text-base font-semibold transition-colors duration-200 bg-transparent text-executive-muted hover:text-executive-accent";
+                
+                viewFlashcard.classList.remove('hidden');
+                viewFlashcard.classList.add('block');
+                viewTracker.classList.remove('block');
+                viewTracker.classList.add('hidden');
+            } else {
+                btnTracker.className = "px-3 sm:px-4 py-2 rounded text-sm sm:text-base font-semibold transition-colors duration-200 bg-executive-accent text-executive-dark";
+                btnFlashcard.className = "px-3 sm:px-4 py-2 rounded text-sm sm:text-base font-semibold transition-colors duration-200 bg-transparent text-executive-muted hover:text-executive-accent";
+                
+                viewTracker.classList.remove('hidden');
+                viewTracker.classList.add('block');
+                viewFlashcard.classList.remove('block');
+                viewFlashcard.classList.add('hidden');
+            }
+        }
+
+        // إدارة البيانات في LocalStorage
+        const STORAGE_KEY = 'tactical_logs_v1';
+        let logs = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+        // دالة لعرض السجلات في الجدول
+        function renderLogs() {
+            const container = document.getElementById('logs-container');
+            
+            if (logs.length === 0) {
+                container.innerHTML = `
+                    <tr id="empty-state">
+                        <td colspan="5" class="px-4 py-8 text-center text-gray-500">
+                            <i class="fa-solid fa-box-open text-3xl mb-2 block"></i>
+                            لا توجد سجلات تكتيكية بعد. الأرشيف فارغ.
+                        </td>
+                    </tr>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            
+            // عرض أحدث السجلات أولاً
+            [...logs].reverse().forEach(log => {
+                // تحديد لون الحدة بناءً على الرقم
+                let intensityColor = 'text-green-400';
+                if(log.intensity > 4) intensityColor = 'text-yellow-400';
+                if(log.intensity > 7) intensityColor = 'text-red-400';
+
+                const row = document.createElement('tr');
+                row.className = "hover:bg-executive-dark/50 transition-colors";
+                row.innerHTML = `
+                    <td class="px-4 py-4 whitespace-nowrap text-xs text-gray-400">${log.date}</td>
+                    <td class="px-4 py-4 line-clamp-2" title="${log.situation}">${log.situation}</td>
+                    <td class="px-4 py-4 text-red-200/80 italic">${log.thought}</td>
+                    <td class="px-4 py-4 text-center font-bold ${intensityColor}">${log.intensity}/10</td>
+                    <td class="px-4 py-4 text-green-200 border-r border-gray-700/50">${log.response}</td>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        // دالة حفظ سجل جديد
+        document.getElementById('tracker-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const situation = document.getElementById('input-situation').value;
+            const thought = document.getElementById('input-thought').value;
+            const intensity = document.getElementById('input-intensity').value;
+            const response = document.getElementById('input-response').value;
+            
+            const dateObj = new Date();
+            const dateString = dateObj.toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
+
+            const newLog = {
+                id: Date.now(),
+                date: dateString,
+                situation,
+                thought,
+                intensity,
+                response
+            };
+
+            logs.push(newLog);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+            
+            // إعادة ضبط النموذج وتحديث العرض
+            this.reset();
+            document.getElementById('intensity-val').innerText = '5';
+            renderLogs();
+            
+            // رسالة تأكيد بصرية (Flash effect)
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fa-solid fa-check-double mr-2"></i> تم الحفظ بنجاح';
+            submitBtn.classList.replace('bg-executive-accent', 'bg-green-500');
+            submitBtn.classList.replace('text-executive-dark', 'text-white');
+            
+            setTimeout(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.classList.replace('bg-green-500', 'bg-executive-accent');
+                submitBtn.classList.replace('text-white', 'text-executive-dark');
+            }, 2000);
+        });
+
+        // دالة مسح الأرشيف
+        function clearLogs() {
+            if(confirm('هل أنت متأكد من رغبتك في مسح الأرشيف بالكامل؟ لا يمكن التراجع عن هذا الإجراء.')) {
+                logs = [];
+                localStorage.removeItem(STORAGE_KEY);
+                renderLogs();
+            }
+        }
+
+        // التهيئة الأولية عند تحميل الصفحة
+        window.onload = function() {
+            renderLogs();
+        }
+    </script>
+</body>
+</html>
